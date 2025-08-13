@@ -36,28 +36,24 @@ from config.config import (
     CACHE_DIR,
     SETTINGS_FILE,
     DARK_STYLE,
-    LIGHT_STYLE,
     __version__, STYLE_DIR
 )
 from util import (
     load_json,
     save_json,
-    create_dir,
-    load_css
+    create_dir
 )
 
 
 class ModernBrowser(QMainWindow):
     def __init__(
-            self, 
-            app) \
+            self) \
             -> None:
         super().__init__()
         self.setWindowTitle(__version__)
         self.setGeometry(100, 100, 1400, 900)
 
         # --- State ---
-        self.parent_app = app
         self.create_path = lambda path: create_dir(CACHE_DIR, path)
 
         self.session = load_json(self.create_path(SESSION_FILE), [])
@@ -128,13 +124,9 @@ class ModernBrowser(QMainWindow):
         self.screenshot_btn.triggered.connect(self.screenshot)
         self.navbar.addAction(self.screenshot_btn)
 
-        self.change_theme_btn = QAction(QIcon.fromTheme(""), "Change Theme", self)
-        self.change_theme_btn.triggered.connect(self.change_theme)
-        self.navbar.addAction(self.change_theme_btn)
-
         self.is_fullscreen = False
 
-        self.change_theme()
+        self.apply_dark_mode(self.settings.get("dark_mode", False))
         self.add_tab(url=self.settings.get("home_url", HOME_URL))
 
         self.pomodoro_timer.timeout.connect(self.pomodoro_tick)
@@ -355,19 +347,14 @@ class ModernBrowser(QMainWindow):
             self.showFullScreen()
             self.is_fullscreen = True
 
-    def change_theme(self) -> None:
-        self.apply_dark_mode(self.settings.get("dark_mode"))
-
     def apply_dark_mode(
             self,
             enabled: bool) \
             -> None:
         if enabled:
-            self.parent_app.setStyleSheet(load_css(DARK_STYLE))
-            self.settings["dark_mode"] = not enabled
+            self.setStyleSheet(create_dir(STYLE_DIR, DARK_STYLE))
         else:
-            self.parent_app.setStyleSheet(load_css(LIGHT_STYLE))
-            self.settings["dark_mode"] = not enabled
+            self.setStyleSheet("")
 
     def tab_context_menu(
             self,

@@ -1,6 +1,3 @@
-import json
-import os
-import sys
 from typing import Any
 
 from PyQt6.QtCore import (
@@ -13,10 +10,7 @@ from PyQt6.QtGui import (
     QAction,
     QIcon
 )
-from PyQt6.QtWebEngineCore import QWebEngineSettings
-from PyQt6.QtWebEngineWidgets import QWebEngineView
 from PyQt6.QtWidgets import (
-    QApplication,
     QFileDialog,
     QInputDialog,
     QLineEdit,
@@ -25,12 +19,12 @@ from PyQt6.QtWidgets import (
     QMessageBox,
     QPushButton,
     QTabWidget,
-    QTextEdit,
     QToolBar,
-    QVBoxLayout,
     QWidget
 )
+from selenium.webdriver.remote.utils import load_json
 
+from browser_tab import BrowserTab
 from config.config import (
     BOOKMARKS_FILE,
     HISTORY_FILE,
@@ -39,64 +33,7 @@ from config.config import (
     SESSION_FILE,
     SETTINGS_FILE
 )
-
-
-def load_json(
-        filename: str,
-        default: list[Any] | dict[str, str]) \
-        -> list[dict[str, str]]:
-    if os.path.exists(filename):
-        try:
-            with open(filename, "r") as f:
-                return json.load(f)
-        except Exception:
-            return default
-    return default
-
-
-def save_json(
-        filename: str,
-        content: list[Any] | dict[str, Any]) \
-        -> None:
-    try:
-        with open(filename, "w") as f:
-            json.dump(content, f)
-    except Exception:
-        pass
-
-
-class BrowserTab(QWidget):
-    def __init__(
-            self,
-            url: str = HOME_URL,
-            tab_id: Any = None) \
-            -> None:
-        super().__init__()
-        self.layout = QVBoxLayout(self)
-        self.webview = QWebEngineView()
-        self.note_area = QTextEdit()
-        self.note_area.setPlaceholderText("Tab notes (exclusive feature)")
-        self.note_area.setMaximumHeight(80)
-        self.note_area.setVisible(False)
-
-        # Enable modern web features
-        settings = self.webview.settings()
-        settings.setAttribute(QWebEngineSettings.WebAttribute.JavascriptEnabled, True)
-        settings.setAttribute(QWebEngineSettings.WebAttribute.PluginsEnabled, True)
-        settings.setAttribute(QWebEngineSettings.WebAttribute.FullScreenSupportEnabled, True)
-        settings.setAttribute(QWebEngineSettings.WebAttribute.WebGLEnabled, True)
-        settings.setAttribute(QWebEngineSettings.WebAttribute.Accelerated2dCanvasEnabled, True)
-        settings.setAttribute(QWebEngineSettings.WebAttribute.LocalStorageEnabled, True)
-        settings.setAttribute(QWebEngineSettings.WebAttribute.XSSAuditingEnabled, True)
-        settings.setAttribute(QWebEngineSettings.WebAttribute.AutoLoadImages, True)
-        settings.setAttribute(QWebEngineSettings.WebAttribute.ScreenCaptureEnabled, True)
-        settings.setAttribute(QWebEngineSettings.WebAttribute.JavascriptCanOpenWindows, True)
-
-        self.webview.setUrl(QUrl(url))
-        self.layout.addWidget(self.webview)
-        self.layout.addWidget(self.note_area)
-        self.setLayout(self.layout)
-        self.tab_id = tab_id or os.urandom(8).hex()
+from util import save_json
 
 
 class ModernBrowser(QMainWindow):
@@ -472,11 +409,3 @@ class ModernBrowser(QMainWindow):
             muted = page.isAudioMuted()
             page.setAudioMuted(not muted)
             QMessageBox.information(self, "Mute", "Audio " + ("muted" if not muted else "unmuted"))
-
-
-if __name__ == "__main__":
-    os.environ['QTWEBENGINE_CHROMIUM_FLAGS'] = '--no-sandbox'
-    app = QApplication(sys.argv)
-    browser = ModernBrowser()
-    browser.show()
-    sys.exit(app.exec())

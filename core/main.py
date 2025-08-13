@@ -8,6 +8,8 @@ from PyQt6.QtWidgets import (
 from modern_browser import ModernBrowser
 
 if __name__ == "__main__":
+    os.environ["QT_STYLE_OVERRIDE"] = ""
+    os.environ["QT_QPA_PLATFORMTHEME"] = ""
     os.environ['QTWEBENGINE_REMOTE_DEBUGGING'] = '9222'
     os.environ['QTWEBENGINE_CHROMIUM_FLAGS'] = (
         '--no-sandbox '
@@ -15,6 +17,6 @@ if __name__ == "__main__":
         '--enable-devtools-experiments'
     )
     app = QApplication(sys.argv)
-    browser = ModernBrowser()
+    browser = ModernBrowser(app)
     browser.show()
     sys.exit(app.exec())

@@ -2,31 +2,31 @@
 @import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@1,300&display=swap');
 
 QWidget {
-    background: #3c3c3c;
+    background: #e8e8e8;
     font-family: 'Calibri';
-    border: 1px solid #282828;
+    color: #000000;
+    border: 1px solid #aeaeae;
     border-radius: 8px;
-    color: #e8e8e8;
 }
 
 QMainWindow {
-    background: #3c3c3c;
+    background: #e8e8e8;
+    border-bottom: 2px solid #aeaeae;
+    border-top: 2px solid #aeaeae;
     margin-top: 0px;
     margin-bottom: 0px;
-    padding: 15px 15px 15px 15px;
-    border: 1px solid #282828;
+    border: 1px solid #aeaeae;
     border-radius: 8px;
-    color: #e8e8e8;
 }
 
 QPushButton {
-    background: #3c3c3c;
+    background: #e8e8e8;
     font-size: 15px;
     font-family: "Ubuntu";
     font-weight: 400;
-    color: #e8e8e8;
+    color: #000000;
     padding: 5px 5px 5px 5px;
-    border: 1px solid #282828;
+    border: 1px solid #aeaeae;
     border-radius: 8px;
 }
 
@@ -34,16 +34,16 @@ QLabel {
     background: transparent;
     font-family: 'Ubuntu';
     font-size: 14px;
-    color: #e8e8e8;
+    color: #000000;
     padding: 5px 5px 5px 5px;
 }
 
 QLineEdit {
-    background: #3c3c3c;
+    background: #e8e8e8;
     font-family: "Ubuntu";
     font-size: 14px;
-    color: #e8e8e8;
+    color: #000000;
     padding: 5px 5px 5px 5px;
-    border: 1px solid #282828;
+    border: 1px solid #aeaeae;
     border-radius: 8px;
 }

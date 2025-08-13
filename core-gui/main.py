@@ -1,6 +1,7 @@
 import json
 import os
 import sys
+from typing import Any
 
 from PyQt6.QtCore import (
     QPoint,
@@ -40,7 +41,10 @@ from config.config import (
 )
 
 
-def load_json(filename, default):
+def load_json(
+        filename: str,
+        default: list[Any] | dict[str, str]) \
+        -> list[dict[str, str]]:
     if os.path.exists(filename):
         try:
             with open(filename, "r") as f:
@@ -49,15 +53,24 @@ def load_json(filename, default):
             return default
     return default
 
-def save_json(filename, content):
+
+def save_json(
+        filename: str,
+        content: list[Any] | dict[str, Any]) \
+        -> None:
     try:
         with open(filename, "w") as f:
             json.dump(content, f)
     except Exception:
         pass
 
+
 class BrowserTab(QWidget):
-    def __init__(self, url=HOME_URL, tab_id=None):
+    def __init__(
+            self,
+            url: str = HOME_URL,
+            tab_id: Any = None) \
+            -> None:
         super().__init__()
         self.layout = QVBoxLayout(self)
         self.webview = QWebEngineView()
@@ -85,8 +98,11 @@ class BrowserTab(QWidget):
         self.setLayout(self.layout)
         self.tab_id = tab_id or os.urandom(8).hex()
 
+
 class ModernBrowser(QMainWindow):
-    def __init__(self):
+    def __init__(
+            self) \
+            -> None:
         super().__init__()
         self.setWindowTitle("Quilix Version 5.0 ENG")
         self.setGeometry(100, 100, 1400, 900)
@@ -167,7 +183,10 @@ class ModernBrowser(QMainWindow):
 
         self.pomodoro_timer.timeout.connect(self.pomodoro_tick)
 
-    def add_tab(self, url=None):
+    def add_tab(
+            self,
+            url: str | None = None) \
+            -> None:
         url = url or self.settings.get("home_url", HOME_URL)
         tab = BrowserTab(url=url)
         idx = self.tabs.addTab(tab, "New Tab")
@@ -180,7 +199,10 @@ class ModernBrowser(QMainWindow):
             tab.note_area.setText(self.notes[tab.tab_id])
         self.tabs.setCurrentIndex(idx)
 
-    def close_tab(self, index):
+    def close_tab(
+            self,
+            index) \
+            -> None:
         if self.tabs.count() > 1:
             self.tabs.removeTab(index)
         else:
@@ -188,32 +210,51 @@ class ModernBrowser(QMainWindow):
             if isinstance(tab, BrowserTab):
                 tab.webview.setUrl(QUrl(self.settings.get("home_url", HOME_URL)))
 
-    def update_navbar(self, idx):
+    def update_navbar(
+            self,
+            idx) \
+            -> None:
         current_tab = self.get_current_tab()
         if current_tab:
             self.address_bar.setText(current_tab.webview.url().toString())
 
-    def get_current_tab(self):
+    def get_current_tab(
+            self) \
+            -> QWidget | None:
         tab = self.tabs.currentWidget()
         return tab if isinstance(tab, BrowserTab) else None
 
-    def go_back(self):
+    def go_back(
+            self) \
+            -> None:
         tab = self.get_current_tab()
-        if tab: tab.webview.back()
+        if tab:
+            tab.webview.back()
 
-    def go_forward(self):
+    def go_forward(
+            self) \
+            -> None:
         tab = self.get_current_tab()
-        if tab: tab.webview.forward()
+        if tab:
+            tab.webview.forward()
 
-    def reload_page(self):
+    def reload_page(
+            self) \
+            -> None:
         tab = self.get_current_tab()
-        if tab: tab.webview.reload()
+        if tab:
+            tab.webview.reload()
 
-    def go_home(self):
+    def go_home(
+            self) \
+            -> None:
         tab = self.get_current_tab()
-        if tab: tab.webview.setUrl(QUrl(self.settings.get("home_url", HOME_URL)))
+        if tab:
+            tab.webview.setUrl(QUrl(self.settings.get("home_url", HOME_URL)))
 
-    def smart_search(self):
+    def smart_search(
+            self) \
+            -> None:
         text = self.address_bar.text().strip()
         if not text:
             return
@@ -243,31 +284,38 @@ class ModernBrowser(QMainWindow):
         else:
             self.add_tab("https://www.google.com/search?q=" + text)
 
-    def save_session(self):
-        session = []
-        for i in range(self.tabs.count()):
-            tab = self.tabs.widget(i)
-            if isinstance(tab, BrowserTab):
-                session.append({"url": tab.webview.url().toString()})
+    def save_session(
+            self) \
+            -> None:
+        session = [tab := self.tabs.widget(i) for i in range(self.tabs.count()) if isinstance(tab, BrowserTab)]
         save_json(SESSION_FILE, session)
         QMessageBox.information(self, "Session", "Session saved!")
 
-    def restore_session(self):
+    def restore_session(
+            self) \
+            -> None:
         self.tabs.clear()
         self.session = load_json(SESSION_FILE, [])
         for t in self.session:
             self.add_tab(t["url"])
 
-    def save_note(self, tab):
+    def save_note(
+            self,
+            tab: BrowserTab) \
+            -> None:
         self.notes[tab.tab_id] = tab.note_area.toPlainText()
         save_json(NOTES_FILE, self.notes)
 
-    def show_notes(self):
+    def show_notes(
+            self) \
+            -> None:
         tab = self.get_current_tab()
         if tab:
             tab.note_area.setVisible(not tab.note_area.isVisible())
 
-    def toggle_pomodoro(self):
+    def toggle_pomodoro(
+            self) \
+            -> None:
         if self.pomodoro_state == "idle":
             mins, ok = QInputDialog.getInt(self, "Pomodoro", "Minutes to focus:", 25, 1, 120)
             if ok:
@@ -280,14 +328,18 @@ class ModernBrowser(QMainWindow):
             self.pomodoro_state = "idle"
             QMessageBox.information(self, "Pomodoro", f"Timer stopped.")
 
-    def pomodoro_tick(self):
+    def pomodoro_tick(
+            self) \
+            -> None:
         self.pomodoro_time -= 1
         if self.pomodoro_time <= 0:
             self.pomodoro_timer.stop()
             self.pomodoro_state = "idle"
             QMessageBox.information(self, "Pomodoro", "Time's up!")
 
-    def screenshot(self):
+    def screenshot(
+            self) \
+            -> None:
         tab = self.get_current_tab()
         if tab:
             pixmap = tab.webview.grab()
@@ -298,25 +350,43 @@ class ModernBrowser(QMainWindow):
                 img.save(fname)
                 QMessageBox.information(self, "Screenshot", f"Saved as {fname}")
 
-    def update_address_bar(self, qurl, tab):
+    def update_address_bar(
+            self,
+            qurl: Any,
+            tab: BrowserTab) \
+            -> None:
         if tab == self.get_current_tab():
             self.address_bar.setText(qurl.toString())
 
-    def update_tab_title(self, title, idx):
+    def update_tab_title(
+            self,
+            title,
+            idx: int) \
+            -> None:
         self.tabs.setTabText(idx, title if title else "New Tab")
 
-    def set_tab_icon(self, idx, icon):
+    def set_tab_icon(
+            self,
+            idx: int,
+            icon) \
+            -> None:
         if not icon.isNull():
             self.tabs.setTabIcon(idx, icon)
 
-    def save_history(self, qurl, tab):
+    def save_history(
+            self,
+            qurl,
+            tab) \
+            -> None:
         url = qurl.toString()
         title = tab.webview.title() or url
         if url and (not self.history or self.history[-1]["url"] != url):
             self.history.append({"title": title, "url": url})
             save_json(HISTORY_FILE, self.history)
 
-    def toggle_fullscreen(self):
+    def toggle_fullscreen(
+            self) \
+            -> None:
         if self.is_fullscreen:
             self.showNormal()
             self.is_fullscreen = False
@@ -324,7 +394,10 @@ class ModernBrowser(QMainWindow):
             self.showFullScreen()
             self.is_fullscreen = True
 
-    def apply_dark_mode(self, enabled):
+    def apply_dark_mode(
+            self,
+            enabled: bool) \
+            -> None:
         if enabled:
             self.setStyleSheet("""QMainWindow, QWidget, QTabWidget, QToolBar, QLineEdit, QListWidget, QDialog, QLabel, QPushButton {
                     background-color: #222 !important;
@@ -338,7 +411,10 @@ class ModernBrowser(QMainWindow):
         else:
             self.setStyleSheet("")
 
-    def tab_context_menu(self, pos: QPoint):
+    def tab_context_menu(
+            self,
+            pos: QPoint) \
+            -> None:
         idx = self.tabs.tabBar().tabAt(pos)
         if idx < 0:
             return
@@ -359,18 +435,27 @@ class ModernBrowser(QMainWindow):
         menu.addAction(close_action)
         menu.exec(self.tabs.tabBar().mapToGlobal(pos))
 
-    def duplicate_tab(self, idx):
+    def duplicate_tab(
+            self,
+            idx: int) \
+            -> None:
         tab = self.tabs.widget(idx)
         if isinstance(tab, BrowserTab):
             url = tab.webview.url().toString()
             self.add_tab(url)
 
-    def reload_tab(self, idx):
+    def reload_tab(
+            self,
+            idx: int) \
+            -> None:
         tab = self.tabs.widget(idx)
         if isinstance(tab, BrowserTab):
             tab.webview.reload()
 
-    def toggle_mute_tab(self, idx):
+    def toggle_mute_tab(
+            self,
+            idx: int) \
+            -> None:
         tab = self.tabs.widget(idx)
         if isinstance(tab, BrowserTab):
             page = tab.webview.page()
@@ -378,13 +463,16 @@ class ModernBrowser(QMainWindow):
             page.setAudioMuted(not muted)
             QMessageBox.information(self, "Mute", "Audio " + ("muted" if not muted else "unmuted"))
 
-    def toggle_mute(self):
+    def toggle_mute(
+            self) \
+            -> None:
         tab = self.get_current_tab()
         if tab:
             page = tab.webview.page()
             muted = page.isAudioMuted()
             page.setAudioMuted(not muted)
             QMessageBox.information(self, "Mute", "Audio " + ("muted" if not muted else "unmuted"))
+
 
 if __name__ == "__main__":
     os.environ['QTWEBENGINE_CHROMIUM_FLAGS'] = '--no-sandbox'

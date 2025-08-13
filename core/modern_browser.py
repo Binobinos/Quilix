@@ -32,9 +32,10 @@ from config.config import (
     HOME_URL,
     NOTES_FILE,
     SESSION_FILE,
-    SETTINGS_FILE
+    SETTINGS_FILE,
+    DARK_STYLE
 )
-from core.browser_tab import BrowserTab
+from browser_tab import BrowserTab
 from util import (
     load_json,
     save_json
@@ -341,15 +342,7 @@ class ModernBrowser(QMainWindow):
             enabled: bool) \
             -> None:
         if enabled:
-            self.setStyleSheet("""QMainWindow, QWidget, QTabWidget, QToolBar, QLineEdit, QListWidget, QDialog, QLabel, QPushButton {
-                    background-color: #222 !important;
-                    color: #eee !important;
-                }
-                QLineEdit, QListWidget {
-                    background-color: #333 !important;
-                    color: #eee !important;
-                }
-            """)
+            self.setStyleSheet(DARK_STYLE)
         else:
             self.setStyleSheet("")
 

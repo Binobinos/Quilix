@@ -33,13 +33,15 @@ from config.config import (
     HOME_URL,
     NOTES_FILE,
     SESSION_FILE,
+    CACHE_DIR,
     SETTINGS_FILE,
     DARK_STYLE,
-    __version__
+    __version__, STYLE_DIR
 )
 from util import (
     load_json,
-    save_json
+    save_json,
+    create_dir
 )
 
 
@@ -52,11 +54,13 @@ class ModernBrowser(QMainWindow):
         self.setGeometry(100, 100, 1400, 900)
 
         # --- State ---
-        self.session = load_json(SESSION_FILE, [])
-        self.bookmarks = load_json(BOOKMARKS_FILE, [])
-        self.history = load_json(HISTORY_FILE, [])
-        self.settings = load_json(SETTINGS_FILE, {"home_url": HOME_URL, "dark_mode": False})
-        self.notes = load_json(NOTES_FILE, {})
+        self.create_path = lambda path: create_dir(CACHE_DIR, path)
+
+        self.session = load_json(self.create_path(SESSION_FILE), [])
+        self.bookmarks = load_json(self.create_path(BOOKMARKS_FILE), [])
+        self.history = load_json(self.create_path(HISTORY_FILE), [])
+        self.settings = load_json(self.create_path(SETTINGS_FILE), {"home_url": HOME_URL, "dark_mode": False})
+        self.notes = load_json(self.create_path(NOTES_FILE), {})
         self.pomodoro_timer = QTimer(self)
         self.pomodoro_state = "idle"
         self.pomodoro_time = 0
@@ -243,8 +247,9 @@ class ModernBrowser(QMainWindow):
             self) \
             -> None:
         self.tabs.clear()
-        self.session = load_json(SESSION_FILE, [])
+        self.session = load_json(self.create_path(SESSION_FILE), [])
         for t in self.session:
+            print(t)
             self.add_tab(t["url"])
 
     def save_note(
@@ -347,7 +352,7 @@ class ModernBrowser(QMainWindow):
             enabled: bool) \
             -> None:
         if enabled:
-            self.setStyleSheet(DARK_STYLE)
+            self.setStyleSheet(create_dir(STYLE_DIR, DARK_STYLE))
         else:
             self.setStyleSheet("")
 

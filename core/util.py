@@ -16,6 +16,12 @@ def load_json(
     return default
 
 
+def create_dir(path_dir: str, file_name: str) -> str:
+    if not os.path.exists(path_dir):
+        os.mkdir(path_dir)
+    return os.path.join(path_dir, file_name)
+
+
 def save_json(
         filename: str,
         content: list[Any] | dict[str, Any]) \

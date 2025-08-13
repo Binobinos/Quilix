@@ -1,14 +1,16 @@
 import sys
 import json
 import os
-from PyQt5.QtWidgets import (
+from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QTabWidget, QWidget, QVBoxLayout,
-    QToolBar, QAction, QLineEdit, QPushButton, QFileDialog, QMessageBox,
+    QToolBar, QLineEdit, QPushButton, QFileDialog, QMessageBox,
     QTextEdit, QMenu, QInputDialog
 )
-from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings
-from PyQt5.QtCore import QUrl, Qt, QTimer, QPoint
-from PyQt5.QtGui import QIcon, QPixmap
+from PyQt6.QtGui import QAction
+from PyQt6.QtWebEngineWidgets import QWebEngineView
+from PyQt6.QtWebEngineCore import QWebEngineSettings
+from PyQt6.QtCore import QUrl, Qt, QTimer, QPoint
+from PyQt6.QtGui import QIcon
 
 HOME_URL = "https://www.google.com"
 BOOKMARKS_FILE = "quilix_bookmarks.json"
@@ -45,16 +47,16 @@ class BrowserTab(QWidget):
 
         # Enable modern web features
         settings = self.webview.settings()
-        settings.setAttribute(QWebEngineSettings.JavascriptEnabled, True)
-        settings.setAttribute(QWebEngineSettings.PluginsEnabled, True)
-        settings.setAttribute(QWebEngineSettings.FullScreenSupportEnabled, True)
-        settings.setAttribute(QWebEngineSettings.WebGLEnabled, True)
-        settings.setAttribute(QWebEngineSettings.Accelerated2dCanvasEnabled, True)
-        settings.setAttribute(QWebEngineSettings.LocalStorageEnabled, True)
-        settings.setAttribute(QWebEngineSettings.XSSAuditingEnabled, True)
-        settings.setAttribute(QWebEngineSettings.AutoLoadImages, True)
-        settings.setAttribute(QWebEngineSettings.ScreenCaptureEnabled, True)
-        settings.setAttribute(QWebEngineSettings.JavascriptCanOpenWindows, True)
+        settings.setAttribute(QWebEngineSettings.WebAttribute.JavascriptEnabled, True)
+        settings.setAttribute(QWebEngineSettings.WebAttribute.PluginsEnabled, True)
+        settings.setAttribute(QWebEngineSettings.WebAttribute.FullScreenSupportEnabled, True)
+        settings.setAttribute(QWebEngineSettings.WebAttribute.WebGLEnabled, True)
+        settings.setAttribute(QWebEngineSettings.WebAttribute.Accelerated2dCanvasEnabled, True)
+        settings.setAttribute(QWebEngineSettings.WebAttribute.LocalStorageEnabled, True)
+        settings.setAttribute(QWebEngineSettings.WebAttribute.XSSAuditingEnabled, True)
+        settings.setAttribute(QWebEngineSettings.WebAttribute.AutoLoadImages, True)
+        settings.setAttribute(QWebEngineSettings.WebAttribute.ScreenCaptureEnabled, True)
+        settings.setAttribute(QWebEngineSettings.WebAttribute.JavascriptCanOpenWindows, True)
 
         self.webview.setUrl(QUrl(url))
         self.layout.addWidget(self.webview)
@@ -74,18 +76,16 @@ class ModernBrowser(QMainWindow):
         self.history = load_json(HISTORY_FILE, [])
         self.settings = load_json(SETTINGS_FILE, {"home_url": HOME_URL, "dark_mode": False})
         self.notes = load_json(NOTES_FILE, {})
-        self.pomodoro_timer = QTimer()
+        self.pomodoro_timer = QTimer(self)
         self.pomodoro_state = "idle"
         self.pomodoro_time = 0
-        self.pomodoro_block_sites = set()
 
         # --- UI ---
         self.tabs = QTabWidget()
         self.tabs.setTabsClosable(True)
         self.tabs.tabCloseRequested.connect(self.close_tab)
         self.tabs.currentChanged.connect(self.update_navbar)
-        # Fix context menu: use tabBar's contextMenuEvent for right click
-        self.tabs.tabBar().setContextMenuPolicy(Qt.CustomContextMenu)
+        self.tabs.tabBar().setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.tabs.tabBar().customContextMenuRequested.connect(self.tab_context_menu)
         self.setCentralWidget(self.tabs)
 
@@ -93,24 +93,23 @@ class ModernBrowser(QMainWindow):
         self.addToolBar(self.navbar)
 
         # Standard browser actions
-        self.back_btn = QAction(QIcon.fromTheme("go-previous"), "←", self)
+        self.back_btn = QAction(QIcon(), "←", self)
         self.back_btn.triggered.connect(self.go_back)
         self.navbar.addAction(self.back_btn)
-        self.forward_btn = QAction(QIcon.fromTheme("go-next"), "→", self)
+        self.forward_btn = QAction(QIcon(), "→", self)
         self.forward_btn.triggered.connect(self.go_forward)
         self.navbar.addAction(self.forward_btn)
-        self.reload_btn = QAction(QIcon.fromTheme("view-refresh"), "↺", self)
+        self.reload_btn = QAction(QIcon(), "↺", self)
         self.reload_btn.triggered.connect(self.reload_page)
         self.navbar.addAction(self.reload_btn)
-        self.home_btn = QAction(QIcon.fromTheme("go-home"), "🏠", self)
+        self.home_btn = QAction(QIcon(), "🏠", self)
         self.home_btn.triggered.connect(self.go_home)
         self.navbar.addAction(self.home_btn)
-        self.fullscreen_btn = QAction(QIcon.fromTheme("view-fullscreen"), "⛶", self)
+        self.fullscreen_btn = QAction(QIcon(), "⛶", self)
         self.fullscreen_btn.triggered.connect(self.toggle_fullscreen)
         self.navbar.addAction(self.fullscreen_btn)
         self.navbar.addSeparator()
 
-        # Smart Search Bar
         self.address_bar = QLineEdit()
         self.address_bar.setPlaceholderText("Smart Search: url, bookmarks, actions (note, timer, mute, screenshot...)")
         self.address_bar.returnPressed.connect(self.smart_search)
@@ -120,24 +119,23 @@ class ModernBrowser(QMainWindow):
         self.new_tab_btn.clicked.connect(lambda: self.add_tab())
         self.navbar.addWidget(self.new_tab_btn)
 
-        # Lite exclusive features
-        self.session_btn = QAction(QIcon.fromTheme("document-save"), "Save Session", self)
+        self.session_btn = QAction(QIcon("save_session"), "Save Session", self)
         self.session_btn.triggered.connect(self.save_session)
         self.navbar.addAction(self.session_btn)
 
-        self.restore_btn = QAction(QIcon.fromTheme("document-open"), "Restore Session", self)
+        self.restore_btn = QAction(QIcon(), "Restore Session", self)
         self.restore_btn.triggered.connect(self.restore_session)
         self.navbar.addAction(self.restore_btn)
 
-        self.notes_btn = QAction(QIcon.fromTheme("accessories-text-editor"), "Show Notes", self)
+        self.notes_btn = QAction(QIcon(), "Show Notes", self)
         self.notes_btn.triggered.connect(self.show_notes)
         self.navbar.addAction(self.notes_btn)
 
-        self.pomodoro_btn = QAction(QIcon.fromTheme("clock"), "Pomodoro", self)
+        self.pomodoro_btn = QAction(QIcon(), "Pomodoro", self)
         self.pomodoro_btn.triggered.connect(self.toggle_pomodoro)
         self.navbar.addAction(self.pomodoro_btn)
 
-        self.screenshot_btn = QAction(QIcon.fromTheme("camera-photo"), "Screenshot", self)
+        self.screenshot_btn = QAction(QIcon(), "Screenshot", self)
         self.screenshot_btn.triggered.connect(self.screenshot)
         self.navbar.addAction(self.screenshot_btn)
 
@@ -148,7 +146,6 @@ class ModernBrowser(QMainWindow):
 
         self.pomodoro_timer.timeout.connect(self.pomodoro_tick)
 
-    # ---- Core Tab Management ----
     def add_tab(self, url=None):
         url = url or self.settings.get("home_url", HOME_URL)
         tab = BrowserTab(url=url)
@@ -158,7 +155,6 @@ class ModernBrowser(QMainWindow):
         tab.webview.iconChanged.connect(lambda icon, i=idx: self.set_tab_icon(i, icon))
         tab.webview.urlChanged.connect(lambda qurl, t=tab: self.save_history(qurl, t))
         tab.note_area.textChanged.connect(lambda t=tab: self.save_note(t))
-        # Restore note if exists
         if tab.tab_id in self.notes:
             tab.note_area.setText(self.notes[tab.tab_id])
         self.tabs.setCurrentIndex(idx)
@@ -180,7 +176,6 @@ class ModernBrowser(QMainWindow):
         tab = self.tabs.currentWidget()
         return tab if isinstance(tab, BrowserTab) else None
 
-    # ---- Navigation ----
     def go_back(self):
         tab = self.get_current_tab()
         if tab: tab.webview.back()
@@ -197,12 +192,10 @@ class ModernBrowser(QMainWindow):
         tab = self.get_current_tab()
         if tab: tab.webview.setUrl(QUrl(self.settings.get("home_url", HOME_URL)))
 
-    # ---- Smart Search Bar ----
     def smart_search(self):
         text = self.address_bar.text().strip()
         if not text:
             return
-        # Actions
         if text.lower() == "note":
             self.show_notes()
             return
@@ -215,7 +208,6 @@ class ModernBrowser(QMainWindow):
         elif text.lower() == "screenshot":
             self.screenshot()
             return
-        # Bookmarks, history
         for b in self.bookmarks:
             if text.lower() in b["title"].lower() or text.lower() in b["url"].lower():
                 self.add_tab(b["url"])
@@ -224,15 +216,12 @@ class ModernBrowser(QMainWindow):
             if text.lower() in h["title"].lower() or text.lower() in h["url"].lower():
                 self.add_tab(h["url"])
                 return
-        # URLs
         if "." in text or text.startswith("http"):
             url = text if text.startswith("http") else "https://" + text
             self.add_tab(url)
         else:
-            # Google search fallback
             self.add_tab("https://www.google.com/search?q=" + text)
 
-    # ---- Session Save/Restore ----
     def save_session(self):
         session = []
         for i in range(self.tabs.count()):
@@ -248,7 +237,6 @@ class ModernBrowser(QMainWindow):
         for t in self.session:
             self.add_tab(t["url"])
 
-    # ---- Notes per Tab ----
     def save_note(self, tab):
         self.notes[tab.tab_id] = tab.note_area.toPlainText()
         save_json(NOTES_FILE, self.notes)
@@ -258,7 +246,6 @@ class ModernBrowser(QMainWindow):
         if tab:
             tab.note_area.setVisible(not tab.note_area.isVisible())
 
-    # ---- Pomodoro Productivity ----
     def toggle_pomodoro(self):
         if self.pomodoro_state == "idle":
             mins, ok = QInputDialog.getInt(self, "Pomodoro", "Minutes to focus:", 25, 1, 120)
@@ -279,17 +266,16 @@ class ModernBrowser(QMainWindow):
             self.pomodoro_state = "idle"
             QMessageBox.information(self, "Pomodoro", "Time's up!")
 
-    # ---- Screenshot ----
     def screenshot(self):
         tab = self.get_current_tab()
         if tab:
-            def on_screenshot(img):
-                fname, _ = QFileDialog.getSaveFileName(self, "Save Screenshot", "screenshot.png", "PNG Files (*.png)")
-                if fname:
-                    img.save(fname)
-                    QMessageBox.information(self, "Screenshot", f"Saved as {fname}")
             pixmap = tab.webview.grab()
-            on_screenshot(pixmap.toImage())
+            img = pixmap.toImage()
+            fname_tuple = QFileDialog.getSaveFileName(self, "Save Screenshot", "screenshot.png", "PNG Files (*.png)")
+            fname = fname_tuple[0] if isinstance(fname_tuple, tuple) else fname_tuple
+            if fname:
+                img.save(fname)
+                QMessageBox.information(self, "Screenshot", f"Saved as {fname}")
 
     def update_address_bar(self, qurl, tab):
         if tab == self.get_current_tab():
@@ -319,8 +305,7 @@ class ModernBrowser(QMainWindow):
 
     def apply_dark_mode(self, enabled):
         if enabled:
-            self.setStyleSheet("""
-                QMainWindow, QWidget, QTabWidget, QToolBar, QLineEdit, QListWidget, QDialog, QLabel, QPushButton {
+            self.setStyleSheet("""QMainWindow, QWidget, QTabWidget, QToolBar, QLineEdit, QListWidget, QDialog, QLabel, QPushButton {
                     background-color: #222 !important;
                     color: #eee !important;
                 }
@@ -351,7 +336,7 @@ class ModernBrowser(QMainWindow):
         menu.addAction(mute_action)
         menu.addSeparator()
         menu.addAction(close_action)
-        menu.exec_(self.tabs.tabBar().mapToGlobal(pos))
+        menu.exec(self.tabs.tabBar().mapToGlobal(pos))
 
     def duplicate_tab(self, idx):
         tab = self.tabs.widget(idx)
@@ -368,7 +353,7 @@ class ModernBrowser(QMainWindow):
         tab = self.tabs.widget(idx)
         if isinstance(tab, BrowserTab):
             page = tab.webview.page()
-            muted = page.audioMuted()
+            muted = page.isAudioMuted()
             page.setAudioMuted(not muted)
             QMessageBox.information(self, "Mute", "Audio " + ("muted" if not muted else "unmuted"))
 
@@ -376,7 +361,7 @@ class ModernBrowser(QMainWindow):
         tab = self.get_current_tab()
         if tab:
             page = tab.webview.page()
-            muted = page.audioMuted()
+            muted = page.isAudioMuted()
             page.setAudioMuted(not muted)
             QMessageBox.information(self, "Mute", "Audio " + ("muted" if not muted else "unmuted"))
 
@@ -385,4 +370,4 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     browser = ModernBrowser()
     browser.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

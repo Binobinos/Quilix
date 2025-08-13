@@ -1,5 +1,5 @@
-/core-gui/cache/
-/core-gui/logs/
+/core/cache/
+/core/logs/
 .DS_Store
 Thumbs.db
 *.swp

@@ -130,19 +130,19 @@ class ModernBrowser(QMainWindow):
         self.addToolBar(self.navbar)
 
         # Standard browser actions
-        self.back_btn = QAction(QIcon(), "←", self)
+        self.back_btn = QAction(QIcon.fromTheme("go-previous"), "←", self)
         self.back_btn.triggered.connect(self.go_back)
         self.navbar.addAction(self.back_btn)
-        self.forward_btn = QAction(QIcon(), "→", self)
+        self.forward_btn = QAction(QIcon.fromTheme("go-next"), "→", self)
         self.forward_btn.triggered.connect(self.go_forward)
         self.navbar.addAction(self.forward_btn)
-        self.reload_btn = QAction(QIcon(), "↺", self)
+        self.reload_btn = QAction(QIcon.fromTheme("view-refresh"), "↺", self)
         self.reload_btn.triggered.connect(self.reload_page)
         self.navbar.addAction(self.reload_btn)
-        self.home_btn = QAction(QIcon(), "🏠", self)
+        self.home_btn = QAction(QIcon.fromTheme("go-home"), "🏠", self)
         self.home_btn.triggered.connect(self.go_home)
         self.navbar.addAction(self.home_btn)
-        self.fullscreen_btn = QAction(QIcon(), "⛶", self)
+        self.fullscreen_btn = QAction(QIcon.fromTheme("view-fullscreen"), "⛶", self)
         self.fullscreen_btn.triggered.connect(self.toggle_fullscreen)
         self.navbar.addAction(self.fullscreen_btn)
         self.navbar.addSeparator()
@@ -156,23 +156,23 @@ class ModernBrowser(QMainWindow):
         self.new_tab_btn.clicked.connect(lambda: self.add_tab())
         self.navbar.addWidget(self.new_tab_btn)
 
-        self.session_btn = QAction(QIcon("save_session"), "Save Session", self)
+        self.session_btn = QAction(QIcon.fromTheme("document-save"), "Save Session", self)
         self.session_btn.triggered.connect(self.save_session)
         self.navbar.addAction(self.session_btn)
 
-        self.restore_btn = QAction(QIcon(), "Restore Session", self)
+        self.restore_btn = QAction(QIcon.fromTheme("document-open"), "Restore Session", self)
         self.restore_btn.triggered.connect(self.restore_session)
         self.navbar.addAction(self.restore_btn)
 
-        self.notes_btn = QAction(QIcon(), "Show Notes", self)
+        self.notes_btn = QAction(QIcon.fromTheme("accessories-text-editor"), "Show Notes", self)
         self.notes_btn.triggered.connect(self.show_notes)
         self.navbar.addAction(self.notes_btn)
 
-        self.pomodoro_btn = QAction(QIcon(), "Pomodoro", self)
+        self.pomodoro_btn = QAction(QIcon.fromTheme("clock"), "Pomodoro", self)
         self.pomodoro_btn.triggered.connect(self.toggle_pomodoro)
         self.navbar.addAction(self.pomodoro_btn)
 
-        self.screenshot_btn = QAction(QIcon(), "Screenshot", self)
+        self.screenshot_btn = QAction(QIcon.fromTheme("camera-photo"), "Screenshot", self)
         self.screenshot_btn.triggered.connect(self.screenshot)
         self.navbar.addAction(self.screenshot_btn)
 

@@ -1,0 +1,6 @@
+HOME_URL = "https://www.google.com"
+BOOKMARKS_FILE = "quilix_bookmarks.json"
+HISTORY_FILE = "quilix_history.json"
+SETTINGS_FILE = "quilix_settings.json"
+SESSION_FILE = "quilix_session.json"
+NOTES_FILE = "quilix_notes.json"

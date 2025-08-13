@@ -1,23 +1,44 @@
-import sys
 import json
 import os
-from PyQt6.QtWidgets import (
-    QApplication, QMainWindow, QTabWidget, QWidget, QVBoxLayout,
-    QToolBar, QLineEdit, QPushButton, QFileDialog, QMessageBox,
-    QTextEdit, QMenu, QInputDialog
-)
-from PyQt6.QtGui import QAction
-from PyQt6.QtWebEngineWidgets import QWebEngineView
-from PyQt6.QtWebEngineCore import QWebEngineSettings
-from PyQt6.QtCore import QUrl, Qt, QTimer, QPoint
-from PyQt6.QtGui import QIcon
+import sys
 
-HOME_URL = "https://www.google.com"
-BOOKMARKS_FILE = "quilix_bookmarks.json"
-HISTORY_FILE = "quilix_history.json"
-SETTINGS_FILE = "quilix_settings.json"
-SESSION_FILE = "quilix_session.json"
-NOTES_FILE = "quilix_notes.json"
+from PyQt6.QtCore import (
+    QPoint,
+    Qt,
+    QTimer,
+    QUrl
+)
+from PyQt6.QtGui import (
+    QAction,
+    QIcon
+)
+from PyQt6.QtWebEngineCore import QWebEngineSettings
+from PyQt6.QtWebEngineWidgets import QWebEngineView
+from PyQt6.QtWidgets import (
+    QApplication,
+    QFileDialog,
+    QInputDialog,
+    QLineEdit,
+    QMainWindow,
+    QMenu,
+    QMessageBox,
+    QPushButton,
+    QTabWidget,
+    QTextEdit,
+    QToolBar,
+    QVBoxLayout,
+    QWidget
+)
+
+from config.config import (
+    BOOKMARKS_FILE,
+    HISTORY_FILE,
+    HOME_URL,
+    NOTES_FILE,
+    SESSION_FILE,
+    SETTINGS_FILE
+)
+
 
 def load_json(filename, default):
     if os.path.exists(filename):

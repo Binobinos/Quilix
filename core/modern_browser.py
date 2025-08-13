@@ -26,6 +26,7 @@ from PyQt6.QtWidgets import (
     QWidget
 )
 
+from browser_tab import BrowserTab
 from config.config import (
     BOOKMARKS_FILE,
     HISTORY_FILE,
@@ -33,9 +34,9 @@ from config.config import (
     NOTES_FILE,
     SESSION_FILE,
     SETTINGS_FILE,
-    DARK_STYLE
+    DARK_STYLE,
+    __version__
 )
-from browser_tab import BrowserTab
 from util import (
     load_json,
     save_json
@@ -47,7 +48,7 @@ class ModernBrowser(QMainWindow):
             self) \
             -> None:
         super().__init__()
-        self.setWindowTitle("Quilix Version 5.0 ENG")
+        self.setWindowTitle(__version__)
         self.setGeometry(100, 100, 1400, 900)
 
         # --- State ---
@@ -230,9 +231,13 @@ class ModernBrowser(QMainWindow):
     def save_session(
             self) \
             -> None:
-        session = [tab := self.tabs.widget(i) for i in range(self.tabs.count()) if isinstance(tab, BrowserTab)]
-        save_json(SESSION_FILE, session)
-        QMessageBox.information(self, "Session", "Session saved!")
+        try:
+            session = [{"url": tab.webview.url().toString()} for i in range(self.tabs.count()) if
+                       isinstance((tab := self.tabs.widget(i)), BrowserTab)]
+            save_json(SESSION_FILE, session)
+            QMessageBox.information(self, "Session", "Session saved!")
+        except Exception as e:
+            print(e)
 
     def restore_session(
             self) \

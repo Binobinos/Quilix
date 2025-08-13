@@ -1,3 +1,7 @@
+.gitignore
+.gitmodules
+/core-gui/cache/
+/core-gui/logs/
 .DS_Store
 Thumbs.db
 *.swp
@@ -40,8 +44,3 @@ config.json
 *.pdf
 *.xlsx
 *.csv
-
-.gitignore
-.gitmodules
-/core-gui/cache/
-/core-gui/logs/

@@ -26,7 +26,7 @@ Especially needed:
 
 # Project Team
 
-- Author **winmatwey** - https://github.com/kzmatwey-spec
+- Author **winmatwey** - https://github.com/winmatwey
 
 - Core Developer **Binobinos** - https://github.com/Binobinos
 

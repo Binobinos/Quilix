@@ -1,0 +1,10 @@
+QMainWindow, QWidget, QTabWidget, QToolBar, QLineEdit, QListWidget, QDialog, QLabel, QPushButton 
+{
+    background-color: #222 !important;
+    color: #eee !important;
+}
+QLineEdit, QListWidget 
+{
+    background-color: #333 !important;
+    color: #eee !important;
+}

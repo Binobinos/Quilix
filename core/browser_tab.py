@@ -1,11 +1,11 @@
 import os
 from typing import Any
 
-from PyQt6.QtWidgets import QMenu, QMessageBox
 from PyQt6.QtCore import QUrl, Qt
 from PyQt6.QtGui import QAction, QGuiApplication, QIcon
-from PyQt6.QtWebEngineCore import QWebEngineSettings, QWebEnginePage
+from PyQt6.QtWebEngineCore import QWebEngineSettings
 from PyQt6.QtWebEngineWidgets import QWebEngineView
+from PyQt6.QtWidgets import QMenu, QMessageBox
 from PyQt6.QtWidgets import QTextEdit
 from PyQt6.QtWidgets import QWidget, QVBoxLayout
 
@@ -79,6 +79,9 @@ class BrowserTab(QWidget):
             copy_url_action = QAction(QIcon.fromTheme("edit-copy"), "Copy URL", self)
             copy_url_action.triggered.connect(self.copy_current_url)
 
+            paste_url_action = QAction(QIcon.fromTheme("edit-paste"), "Paste URL", self)
+            paste_url_action.triggered.connect(self.paste_url)  # Обновлено
+
             open_new_tab_action = QAction(QIcon.fromTheme("tab-new"), "Open in New Tab", self)
             open_new_tab_action.triggered.connect(self.open_in_new_tab)
 
@@ -90,6 +93,7 @@ class BrowserTab(QWidget):
             menu.addAction(reload_action)
             menu.addSeparator()
             menu.addAction(copy_url_action)
+            menu.addAction(paste_url_action)
             menu.addAction(open_new_tab_action)
             menu.addSeparator()
             menu.addAction(inspect_action)
@@ -141,6 +145,26 @@ class BrowserTab(QWidget):
         url = self.webview.url().toString()
         clipboard = QGuiApplication.clipboard()
         clipboard.setText(url)
+
+    def paste_url(self):
+        """Вставляет URL из буфера обмена в адресную строку или текущую страницу"""
+        clipboard = QGuiApplication.clipboard()
+        url = clipboard.text().strip()
+
+        if url:
+            self.webview.page().runJavaScript(f"""
+                const activeElement = document.activeElement;
+                if (activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA')) {{
+                    const start = activeElement.selectionStart;
+                    const end = activeElement.selectionEnd;
+                    activeElement.value = activeElement.value.substring(0, start) + `{url}` + activeElement.value.substring(end);
+                    activeElement.selectionStart = activeElement.selectionEnd = start + {len(url)};
+                }} else {{
+                    if ({QUrl(url).isValid()} && (`{url}`.startsWith('http://') || `{url}`.startsWith('https://'))) {{
+                        window.location = `{url}`;
+                    }}
+                }}
+            """)
 
     def open_in_new_tab(self):
         url = self.webview.url().toString()

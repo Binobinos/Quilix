@@ -130,7 +130,7 @@ class ModernBrowser(QMainWindow):
             url: str | None = None) \
             -> None:
         url = url or self.settings.get("home_url", HOME_URL)
-        tab = BrowserTab(url=url)
+        tab = BrowserTab(self, url=url)
         idx = self.tabs.addTab(tab, "New Tab")
         tab.webview.urlChanged.connect(lambda qurl, t=tab: self.update_address_bar(qurl, t))
         tab.webview.titleChanged.connect(lambda title, i=idx: self.update_tab_title(title, i))
@@ -414,6 +414,8 @@ class ModernBrowser(QMainWindow):
             muted = page.isAudioMuted()
             page.setAudioMuted(not muted)
             QMessageBox.information(self, "Mute", "Audio " + ("muted" if not muted else "unmuted"))
+
+
 
 
 if __name__ == "__main__":

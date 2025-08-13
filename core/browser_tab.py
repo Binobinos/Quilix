@@ -1,9 +1,10 @@
 import os
 from typing import Any
 
+from PyQt6.QtWidgets import QMenu, QMessageBox
 from PyQt6.QtCore import QUrl, Qt
-from PyQt6.QtGui import QAction, QGuiApplication
-from PyQt6.QtWebEngineCore import QWebEngineSettings
+from PyQt6.QtGui import QAction, QGuiApplication, QIcon
+from PyQt6.QtWebEngineCore import QWebEngineSettings, QWebEnginePage
 from PyQt6.QtWebEngineWidgets import QWebEngineView
 from PyQt6.QtWidgets import QTextEdit
 from PyQt6.QtWidgets import QWidget, QVBoxLayout
@@ -42,28 +43,99 @@ class BrowserTab(QWidget):
         settings.setAttribute(QWebEngineSettings.WebAttribute.JavascriptCanOpenWindows, True)
         self.webview.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.webview.customContextMenuRequested.connect(self.page_context_menu)
+        self.webview.page().setInspectedPage(self.webview.page())
+        # Включаем поддержку DevTools
+        self.webview.page().settings().setAttribute(
+            QWebEngineSettings.WebAttribute.JavascriptEnabled, True
+        )
+        self.webview.page().settings().setAttribute(
+            QWebEngineSettings.WebAttribute.LocalContentCanAccessRemoteUrls, True
+        )
         self.webview.setUrl(QUrl(url))
         self.layout.addWidget(self.webview)
         self.layout.addWidget(self.note_area)
         self.setLayout(self.layout)
         self.tab_id = tab_id or os.urandom(8).hex()
         self.parent = parent
+        self._dev_window = None
+        self._dev_view = None
 
     def page_context_menu(self, pos):
-        """Контекстное меню при клике правой кнопкой на странице."""
-        menu = self.webview.createStandardContextMenu()
+        """Кастомное контекстное меню страницы"""
+        try:
+            menu = QMenu(self)
 
-        copy_url_action = QAction("Copy URL", self)
-        copy_url_action.triggered.connect(self.copy_current_url)
+            back_action = QAction(QIcon.fromTheme("go-previous"), "Back", self)
+            back_action.triggered.connect(self.webview.back)
+            back_action.setEnabled(self.webview.history().canGoBack())
 
-        open_new_tab_action = QAction("Open in New Tab", self)
-        open_new_tab_action.triggered.connect(self.open_in_new_tab)
+            forward_action = QAction(QIcon.fromTheme("go-next"), "Forward", self)
+            forward_action.triggered.connect(self.webview.forward)
+            forward_action.setEnabled(self.webview.history().canGoForward())
 
-        menu.addSeparator()
-        menu.addAction(copy_url_action)
-        menu.addAction(open_new_tab_action)
+            reload_action = QAction(QIcon.fromTheme("view-refresh"), "Reload", self)
+            reload_action.triggered.connect(self.webview.reload)
 
-        menu.exec(self.webview.mapToGlobal(pos))
+            copy_url_action = QAction(QIcon.fromTheme("edit-copy"), "Copy URL", self)
+            copy_url_action.triggered.connect(self.copy_current_url)
+
+            open_new_tab_action = QAction(QIcon.fromTheme("tab-new"), "Open in New Tab", self)
+            open_new_tab_action.triggered.connect(self.open_in_new_tab)
+
+            inspect_action = QAction(QIcon.fromTheme("applications-development"), "Inspect", self)
+            inspect_action.triggered.connect(self.inspect_page)
+
+            menu.addAction(back_action)
+            menu.addAction(forward_action)
+            menu.addAction(reload_action)
+            menu.addSeparator()
+            menu.addAction(copy_url_action)
+            menu.addAction(open_new_tab_action)
+            menu.addSeparator()
+            menu.addAction(inspect_action)
+
+            menu.exec(self.webview.mapToGlobal(pos))
+
+        except Exception as e:
+            print(f"Error in context menu: {e}")
+            import traceback
+            traceback.print_exc()
+
+    def inspect_page(self):
+        """Открывает инструменты разработчика с сохранением ссылки на окно"""
+        try:
+            if hasattr(self, '_dev_window') and self._dev_window:
+                self._dev_window.show()
+                self._dev_window.raise_()
+                return
+
+            from PyQt6.QtWidgets import QMainWindow
+            self._dev_window = QMainWindow()
+            self._dev_window.setWindowTitle(f"Developer Tools - {self.webview.title()}")
+            self._dev_window.resize(1024, 768)
+
+            self._dev_view = QWebEngineView(self._dev_window)
+            self._dev_window.setCentralWidget(self._dev_view)
+
+            self.webview.page().setDevToolsPage(self._dev_view.page())
+
+            self._dev_window.destroyed.connect(self._on_devtools_close)
+
+            self._dev_window.show()
+
+        except Exception as e:
+            print(f"Error opening dev tools: {e}")
+            QMessageBox.warning(
+                self,
+                "Inspect Error",
+                "Failed to open developer tools.\n"
+                f"Error: {str(e)}"
+            )
+
+    def _on_devtools_close(self):
+        """Очищаем ссылки при закрытии окна разработчика"""
+        self._dev_window = None
+        self._dev_view = None
 
     def copy_current_url(self):
         url = self.webview.url().toString()

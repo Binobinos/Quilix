@@ -201,18 +201,18 @@ class ModernBrowser(QMainWindow):
 
     def close_tab(
             self,
-            index) \
+            idx: int) \
             -> None:
         if self.tabs.count() > 1:
-            self.tabs.removeTab(index)
+            self.tabs.removeTab(idx)
         else:
-            tab = self.tabs.widget(index)
+            tab = self.tabs.widget(idx)
             if isinstance(tab, BrowserTab):
                 tab.webview.setUrl(QUrl(self.settings.get("home_url", HOME_URL)))
 
     def update_navbar(
             self,
-            idx) \
+            idx: int) \
             -> None:
         current_tab = self.get_current_tab()
         if current_tab:
@@ -360,7 +360,7 @@ class ModernBrowser(QMainWindow):
 
     def update_tab_title(
             self,
-            title,
+            title: str,
             idx: int) \
             -> None:
         self.tabs.setTabText(idx, title if title else "New Tab")
@@ -368,15 +368,15 @@ class ModernBrowser(QMainWindow):
     def set_tab_icon(
             self,
             idx: int,
-            icon) \
+            icon: Any) \
             -> None:
         if not icon.isNull():
             self.tabs.setTabIcon(idx, icon)
 
     def save_history(
             self,
-            qurl,
-            tab) \
+            qurl: Any,
+            tab: Any) \
             -> None:
         url = qurl.toString()
         title = tab.webview.title() or url

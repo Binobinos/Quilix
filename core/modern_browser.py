@@ -6,6 +6,7 @@ session management, note-taking, and productivity features.
 """
 
 from typing import Any
+import os
 
 from PyQt6.QtCore import (
     QPoint,
@@ -44,6 +45,7 @@ from config.config import (
     SETTINGS_FILE,
     DARK_STYLE,
     LIGHT_STYLE,
+    PAGE_URL,
     __version__
 )
 from util import (
@@ -211,7 +213,8 @@ class ModernBrowser(QMainWindow):
         - Connects note saving
         - Restores any existing notes for the tab
         """
-        url = url or self.settings.get("home_url", HOME_URL)
+        # url = url or self.settings.get("home_url", HOME_URL)
+        print(url)
         tab = BrowserTab(self, url=url)
         idx = self.tabs.addTab(tab, "New Tab")
         tab.webview.urlChanged.connect(lambda qurl, t=tab: self.update_address_bar(qurl, t))
@@ -306,7 +309,7 @@ class ModernBrowser(QMainWindow):
         If no tab is active, does nothing.
         """
         if tab := self.get_current_tab():
-            tab.webview.setUrl(QUrl(self.settings.get("home_url", HOME_URL)))
+            tab.webview.setUrl(QUrl.fromLocalFile(os.path.abspath(PAGE_URL)))
 
     def smart_search(
             self) \

@@ -5,8 +5,11 @@ the Quilix browser application including URLs, file paths, version information,
 and Qt WebEngine flags.
 """
 
-HOME_URL = "home//main.html"
+PAGE_URL = "home//main.html"
 """str: The default homepage URL that loads when the browser starts."""
+
+HOME_URL = "https://google.com"
+"""str: The default search engine"""
 
 ICON_DIR = "icons"
 """str: Directory name where browser icon files are stored"""

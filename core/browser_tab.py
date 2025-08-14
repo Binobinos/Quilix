@@ -15,7 +15,7 @@ from PyQt6.QtWebEngineWidgets import QWebEngineView
 from PyQt6.QtWidgets import (QMenu, QMessageBox, QMainWindow, QTextEdit,
                              QWidget, QVBoxLayout)
 
-from config.config import HOME_URL
+from config.config import HOME_URL, PAGE_URL
 
 
 class BrowserTab(QWidget):
@@ -82,7 +82,7 @@ class BrowserTab(QWidget):
             QWebEngineSettings.WebAttribute.LocalContentCanAccessRemoteUrls, True
         )
 
-        self.webview.setUrl(QUrl.fromLocalFile(os.path.abspath(url)))
+        self.webview.setUrl(QUrl.fromLocalFile(os.path.abspath(PAGE_URL)))
         self.layout.addWidget(self.webview)
         self.layout.addWidget(self.note_area)
         self.setLayout(self.layout)

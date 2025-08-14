@@ -1,3 +1,10 @@
+"""
+Browser tab implementation for ModernBrowser.
+
+This module provides the BrowserTab class which represents a single browser tab
+with web browsing capabilities, developer tools integration, and note-taking features.
+"""
+
 import os
 from typing import Any
 
@@ -5,22 +12,44 @@ from PyQt6.QtCore import QUrl, Qt
 from PyQt6.QtGui import QAction, QGuiApplication, QIcon
 from PyQt6.QtWebEngineCore import QWebEngineSettings
 from PyQt6.QtWebEngineWidgets import QWebEngineView
-from PyQt6.QtWidgets import QMenu, QMessageBox
-from PyQt6.QtWidgets import QTextEdit
-from PyQt6.QtWidgets import QWidget, QVBoxLayout
+from PyQt6.QtWidgets import (QMenu, QMessageBox, QMainWindow, QTextEdit,
+                             QWidget, QVBoxLayout)
 
-from config.config import (
-    HOME_URL
-)
+from config.config import HOME_URL
 
 
 class BrowserTab(QWidget):
+    """A single browser tab with web view, developer tools, and note-taking functionality.
+
+    Attributes:
+        webview (QWebEngineView): The main web view component for browsing.
+        note_area (QTextEdit): Text area for tab-specific notes.
+        tab_id (str): Unique identifier for the tab.
+        parent (ModernBrowser): Reference to the parent browser window.
+        _dev_window (QMainWindow): Developer tools window.
+        _dev_view (QWebEngineView): Web view for developer tools.
+    """
+
     def __init__(
             self,
             parent: "ModernBrowser",
             url: str = HOME_URL,
             tab_id: Any = None) \
             -> None:
+        """
+        Initialize a new browser tab.
+
+        Args:
+            parent: Reference to the parent ModernBrowser instance.
+            url: Initial URL to load (defaults to HOME_URL).
+            tab_id: Optional unique identifier for the tab (generated if None).
+
+        The tab includes:
+        - A fully-featured web view with modern web capabilities enabled
+        - A collapsible note-taking area
+        - Context menu with browsing actions
+        - Integrated developer tools
+        """
         super().__init__()
         self.layout = QVBoxLayout(self)
         self.webview = QWebEngineView()
@@ -29,7 +58,7 @@ class BrowserTab(QWidget):
         self.note_area.setMaximumHeight(80)
         self.note_area.setVisible(False)
 
-        # Enable modern web features
+        # Configure web engine settings
         settings = self.webview.settings()
         settings.setAttribute(QWebEngineSettings.WebAttribute.JavascriptEnabled, True)
         settings.setAttribute(QWebEngineSettings.WebAttribute.PluginsEnabled, True)
@@ -41,16 +70,19 @@ class BrowserTab(QWidget):
         settings.setAttribute(QWebEngineSettings.WebAttribute.AutoLoadImages, True)
         settings.setAttribute(QWebEngineSettings.WebAttribute.ScreenCaptureEnabled, True)
         settings.setAttribute(QWebEngineSettings.WebAttribute.JavascriptCanOpenWindows, True)
+
         self.webview.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.webview.customContextMenuRequested.connect(self.page_context_menu)
         self.webview.page().setInspectedPage(self.webview.page())
-        # Включаем поддержку DevTools
+
+        # Enable DevTools support
         self.webview.page().settings().setAttribute(
             QWebEngineSettings.WebAttribute.JavascriptEnabled, True
         )
         self.webview.page().settings().setAttribute(
             QWebEngineSettings.WebAttribute.LocalContentCanAccessRemoteUrls, True
         )
+
         self.webview.setUrl(QUrl(url))
         self.layout.addWidget(self.webview)
         self.layout.addWidget(self.note_area)
@@ -61,7 +93,18 @@ class BrowserTab(QWidget):
         self._dev_view = None
 
     def page_context_menu(self, pos):
-        """Кастомное контекстное меню страницы"""
+        """
+        Display a custom context menu for the web page.
+
+        Args:
+            pos: The position where the context menu was requested.
+
+        The context menu includes:
+        - Navigation actions (back, forward, reload)
+        - URL actions (copy, paste)
+        - Tab management (open in new tab)
+        - Developer tools access
+        """
         try:
             menu = QMenu(self)
 
@@ -80,7 +123,7 @@ class BrowserTab(QWidget):
             copy_url_action.triggered.connect(self.copy_current_url)
 
             paste_url_action = QAction(QIcon.fromTheme("edit-paste"), "Paste URL", self)
-            paste_url_action.triggered.connect(self.paste_url)  # Обновлено
+            paste_url_action.triggered.connect(self.paste_url)
 
             open_new_tab_action = QAction(QIcon.fromTheme("tab-new"), "Open in New Tab", self)
             open_new_tab_action.triggered.connect(self.open_in_new_tab)
@@ -106,14 +149,19 @@ class BrowserTab(QWidget):
             traceback.print_exc()
 
     def inspect_page(self):
-        """Открывает инструменты разработчика с сохранением ссылки на окно"""
+        """
+        Open developer tools in a separate window.
+
+        Creates a new QMainWindow containing a web view connected to the
+        current page's developer tools. If developer tools are already open,
+        brings the existing window to focus.
+        """
         try:
             if hasattr(self, '_dev_window') and self._dev_window:
                 self._dev_window.show()
                 self._dev_window.raise_()
                 return
 
-            from PyQt6.QtWidgets import QMainWindow
             self._dev_window = QMainWindow()
             self._dev_window.setWindowTitle(f"Developer Tools - {self.webview.title()}")
             self._dev_window.resize(1024, 768)
@@ -137,21 +185,25 @@ class BrowserTab(QWidget):
             )
 
     def _on_devtools_close(self):
-        """Очищаем ссылки при закрытии окна разработчика"""
+        """Clean up references when developer tools window is closed."""
         self._dev_window = None
         self._dev_view = None
 
     def copy_current_url(self):
+        """Copy the current page URL to clipboard."""
         url = self.webview.url().toString()
         clipboard = QGuiApplication.clipboard()
         clipboard.setText(url)
 
     def paste_url(self):
-        """Вставляет URL из буфера обмена в адресную строку или текущую страницу"""
-        clipboard = QGuiApplication.clipboard()
-        url = clipboard.text().strip()
+        """Pastes URL from clipboard into current page.
 
-        if url:
+        Attempts to intelligently paste the URL either into a focused input field
+        or navigate to it directly if it's a valid URL.
+        """
+        clipboard = QGuiApplication.clipboard()
+
+        if url := clipboard.text().strip():
             self.webview.page().runJavaScript(f"""
                 const activeElement = document.activeElement;
                 if (activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA')) {{
@@ -167,6 +219,6 @@ class BrowserTab(QWidget):
             """)
 
     def open_in_new_tab(self):
+        """Open the current page URL in a new tab."""
         url = self.webview.url().toString()
         self.parent.add_tab(url)
-

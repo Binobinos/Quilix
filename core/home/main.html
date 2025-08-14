@@ -21,11 +21,12 @@
     </div>
     
     <div class="formBox">
-        <div class="inputbox">
-            <ion-icon name="lock-closed-outline" role="img" class="md hydrated" aria-label="lock closed outline"></ion-icon>
-            <input type="browser" required="">
-            <label for="">Use our browser</label>
-        </div>
+        <form action="https://www.google.com/search" method="GET" class="search-form">
+            <input type="text" name="q" id="search-input" placeholder="Введите поисковый запрос..." required>
+            <button type="submit" class="search-button">
+                <ion-icon name="search-outline"></ion-icon>
+            </button>
+        </form>
         
         <div class="search-engines">
             <h3>Choose search engine:</h3>

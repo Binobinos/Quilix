@@ -112,6 +112,10 @@ class ModernBrowser(QMainWindow):
         self.new_tab_btn.triggered.connect(lambda: self.add_tab())
         self.navbar.addAction(self.new_tab_btn)
 
+        self.pomodoro_btn = QAction(QIcon(self.create_path("clock_dark.png")), "Pomodoro", self)
+        self.pomodoro_btn.triggered.connect(self.toggle_pomodoro)
+        self.navbar.addAction(self.pomodoro_btn)
+
         self.session_btn = QAction(QIcon(self.create_path("document_save.png")), "Save Session", self)
         self.session_btn.triggered.connect(self.save_session)
         self.navbar.addAction(self.session_btn)
@@ -123,10 +127,6 @@ class ModernBrowser(QMainWindow):
         self.notes_btn = QAction(QIcon(self.create_path("show_notes.png")), "Show Notes", self)
         self.notes_btn.triggered.connect(self.show_notes)
         self.navbar.addAction(self.notes_btn)
-
-        self.pomodoro_btn = QAction(QIcon(self.create_path("clock_dark.png")), "Pomodoro", self)
-        self.pomodoro_btn.triggered.connect(self.toggle_pomodoro)
-        self.navbar.addAction(self.pomodoro_btn)
 
         self.screenshot_btn = QAction(QIcon(self.create_path("camera.png")), "Screenshot", self)
         self.screenshot_btn.triggered.connect(self.screenshot)

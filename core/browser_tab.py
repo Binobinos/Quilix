@@ -44,7 +44,7 @@ class BrowserTab(QWidget):
         self.webview.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.webview.customContextMenuRequested.connect(self.page_context_menu)
         self.webview.page().setInspectedPage(self.webview.page())
-        # Включаем поддержку DevTools
+        """DevTools"""
         self.webview.page().settings().setAttribute(
             QWebEngineSettings.WebAttribute.JavascriptEnabled, True
         )
@@ -61,7 +61,7 @@ class BrowserTab(QWidget):
         self._dev_view = None
 
     def page_context_menu(self, pos):
-        """Кастомное контекстное меню страницы"""
+        """Custom page context menu"""
         try:
             menu = QMenu(self)
 
@@ -106,7 +106,7 @@ class BrowserTab(QWidget):
             traceback.print_exc()
 
     def inspect_page(self):
-        """Открывает инструменты разработчика с сохранением ссылки на окно"""
+        """Opens the developer tools while keeping a link to the window"""
         try:
             if hasattr(self, '_dev_window') and self._dev_window:
                 self._dev_window.show()
@@ -137,7 +137,7 @@ class BrowserTab(QWidget):
             )
 
     def _on_devtools_close(self):
-        """Очищаем ссылки при закрытии окна разработчика"""
+        """Clearing links when closing the developer window"""
         self._dev_window = None
         self._dev_view = None
 
@@ -147,7 +147,7 @@ class BrowserTab(QWidget):
         clipboard.setText(url)
 
     def paste_url(self):
-        """Вставляет URL из буфера обмена в адресную строку или текущую страницу"""
+        """Pastes the URL from the clipboard into the address bar or the current page"""
         clipboard = QGuiApplication.clipboard()
         url = clipboard.text().strip()
 

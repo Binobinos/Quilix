@@ -83,9 +83,8 @@ class ModernBrowser(QMainWindow):
         self.navbar = QToolBar()
         self.addToolBar(self.navbar)
 
-        # Standard browser actions
+        """Standard browser actions (buttons back forward home and fullscreen)"""
         self.create_path = lambda path: create_dir(ICON_DIR, path)
-
         self.back_btn = QAction(QIcon(self.create_path("arrow_left_dark.png")), "←", self)
         self.back_btn.triggered.connect(self.go_back)
         self.navbar.addAction(self.back_btn)
@@ -102,36 +101,36 @@ class ModernBrowser(QMainWindow):
         self.fullscreen_btn.triggered.connect(self.toggle_fullscreen)
         self.navbar.addAction(self.fullscreen_btn)
         self.navbar.addSeparator()
-
+        """Adress bar"""
         self.address_bar = QLineEdit()
         self.address_bar.setPlaceholderText("Smart Search: url, bookmarks, actions (note, timer, mute, screenshot...)")
         self.address_bar.returnPressed.connect(self.smart_search)
         self.navbar.addWidget(self.address_bar)
-
+        """New tab button"""
         self.new_tab_btn = QAction(QIcon(self.create_path("add_dark.png")), "New Tab", self)
         self.new_tab_btn.triggered.connect(lambda: self.add_tab())
         self.navbar.addAction(self.new_tab_btn)
-
+        """Pomodoro (timer)"""
         self.pomodoro_btn = QAction(QIcon(self.create_path("clock_dark.png")), "Pomodoro", self)
         self.pomodoro_btn.triggered.connect(self.toggle_pomodoro)
         self.navbar.addAction(self.pomodoro_btn)
-
+        """Saving session button"""
         self.session_btn = QAction(QIcon(self.create_path("document_save.png")), "Save Session", self)
         self.session_btn.triggered.connect(self.save_session)
         self.navbar.addAction(self.session_btn)
-
+        """Restoring session button"""
         self.restore_btn = QAction(QIcon(self.create_path("document_open.png")), "Restore Session", self)
         self.restore_btn.triggered.connect(self.restore_session)
         self.navbar.addAction(self.restore_btn)
-
+        """Notes Button"""
         self.notes_btn = QAction(QIcon(self.create_path("show_notes.png")), "Show Notes", self)
         self.notes_btn.triggered.connect(self.show_notes)
         self.navbar.addAction(self.notes_btn)
-
+        """Screenshot Button"""
         self.screenshot_btn = QAction(QIcon(self.create_path("camera.png")), "Screenshot", self)
         self.screenshot_btn.triggered.connect(self.screenshot)
         self.navbar.addAction(self.screenshot_btn)
-
+        """Light and dark mode button"""
         self.change_theme_btn = QAction(QIcon(self.create_path("light_mode.png")), "Change Theme", self)
         self.change_theme_btn.triggered.connect(self.change_theme)
         self.navbar.addAction(self.change_theme_btn)
@@ -142,7 +141,7 @@ class ModernBrowser(QMainWindow):
         self.add_tab(url=self.settings.get("home_url", HOME_URL))
 
         self.pomodoro_timer.timeout.connect(self.pomodoro_tick)
-
+    """Adding new tab button"""
     def add_tab(
             self,
             url: str | None = None) \
@@ -158,7 +157,7 @@ class ModernBrowser(QMainWindow):
         if tab.tab_id in self.notes:
             tab.note_area.setText(self.notes[tab.tab_id])
         self.tabs.setCurrentIndex(idx)
-
+    """Closisng tab button"""
     def close_tab(
             self,
             idx: int) \
@@ -169,7 +168,7 @@ class ModernBrowser(QMainWindow):
             tab = self.tabs.widget(idx)
             if isinstance(tab, BrowserTab):
                 tab.webview.setUrl(QUrl(self.settings.get("home_url", HOME_URL)))
-
+    """NavBar engine"""
     def update_navbar(
             self,
             idx: int) \
@@ -183,7 +182,7 @@ class ModernBrowser(QMainWindow):
             -> QWidget | None:
         tab = self.tabs.currentWidget()
         return tab if isinstance(tab, BrowserTab) else None
-
+    """Buttons engine"""
     def go_back(
             self) \
             -> None:
@@ -243,7 +242,7 @@ class ModernBrowser(QMainWindow):
             self.add_tab(url)
         else:
             self.add_tab("https://www.google.com/search?q=" + text)
-
+    """Save session button engine"""
     def save_session(
             self) \
             -> None:
@@ -254,7 +253,7 @@ class ModernBrowser(QMainWindow):
             QMessageBox.information(self, "Session", "Session saved!")
         except Exception as e:
             print(e)
-
+    """Restore session engine"""
     def restore_session(
             self) \
             -> None:
@@ -263,21 +262,21 @@ class ModernBrowser(QMainWindow):
         for t in self.session:
             print(t)
             self.add_tab(t["url"])
-
+    """Save note engine"""
     def save_note(
             self,
             tab: BrowserTab) \
             -> None:
         self.notes[tab.tab_id] = tab.note_area.toPlainText()
         save_json(NOTES_FILE, self.notes)
-
+    """Show notes engine"""
     def show_notes(
             self) \
             -> None:
         tab = self.get_current_tab()
         if tab:
             tab.note_area.setVisible(not tab.note_area.isVisible())
-
+    """Pomodoro engine"""
     def toggle_pomodoro(
             self) \
             -> None:
@@ -301,7 +300,7 @@ class ModernBrowser(QMainWindow):
             self.pomodoro_timer.stop()
             self.pomodoro_state = "idle"
             QMessageBox.information(self, "Pomodoro", "Time's up!")
-
+    """Screenshot engine"""
     def screenshot(
             self) \
             -> None:
@@ -314,7 +313,7 @@ class ModernBrowser(QMainWindow):
             if fname:
                 img.save(fname)
                 QMessageBox.information(self, "Screenshot", f"Saved as {fname}")
-
+    """Updating address bar engine"""
     def update_address_bar(
             self,
             qurl: Any,
@@ -322,14 +321,14 @@ class ModernBrowser(QMainWindow):
             -> None:
         if tab == self.get_current_tab():
             self.address_bar.setText(qurl.toString())
-
+    """Update tab engine"""
     def update_tab_title(
             self,
             title: str,
             idx: int) \
             -> None:
         self.tabs.setTabText(idx, title if title else "New Tab")
-
+    """Set tab icon engine"""
     def set_tab_icon(
             self,
             idx: int,
@@ -337,7 +336,7 @@ class ModernBrowser(QMainWindow):
             -> None:
         if not icon.isNull():
             self.tabs.setTabIcon(idx, icon)
-
+    """Save history engine"""
     def save_history(
             self,
             qurl: Any,
@@ -348,7 +347,7 @@ class ModernBrowser(QMainWindow):
         if url and (not self.history or self.history[-1]["url"] != url):
             self.history.append({"title": title, "url": url})
             save_json(HISTORY_FILE, self.history)
-
+    """Fullscreen engine"""
     def toggle_fullscreen(
             self) \
             -> None:
@@ -358,7 +357,7 @@ class ModernBrowser(QMainWindow):
         else:
             self.showFullScreen()
             self.is_fullscreen = True
-
+    """Change theme engine"""
     def change_theme(self) -> None:
         self.apply_dark_mode(self.settings.get("dark_mode"))
 
@@ -398,7 +397,7 @@ class ModernBrowser(QMainWindow):
             self.pomodoro_btn.setIcon(QIcon(self.create_path("clock_dark.png")))
 
             self.settings["dark_mode"] = not enabled
-
+    """Contex menu engine"""
     def tab_context_menu(
             self,
             pos: QPoint) \

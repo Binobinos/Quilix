@@ -1,7 +1,7 @@
 # Quilix Browser - a lightweight and secure Python browser
 
 **Project status**: under active development  
-**Author**: an inexperienced student: winmatwey (Matwey Berkovski), open to help
+**Author**: an inexperienced student: winmatwey (Matwey B.), open to help
 
 ## About the project
 
@@ -14,7 +14,7 @@
 - 🧩 **Minimalism** — intuitive interface without unnecessary  
 
 ## Current status  
-⚠️ **Unstable version 5.5**  
+⚠️ **Unstable version 7.0.0M**  
 * **Not all functions are implemented**  
 
 ## Need help!  

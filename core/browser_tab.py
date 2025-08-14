@@ -44,6 +44,7 @@ class BrowserTab(QWidget):
         self.webview.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.webview.customContextMenuRequested.connect(self.page_context_menu)
         self.webview.page().setInspectedPage(self.webview.page())
+        
         # Включаем поддержку DevTools
         self.webview.page().settings().setAttribute(
             QWebEngineSettings.WebAttribute.JavascriptEnabled, True
@@ -51,7 +52,8 @@ class BrowserTab(QWidget):
         self.webview.page().settings().setAttribute(
             QWebEngineSettings.WebAttribute.LocalContentCanAccessRemoteUrls, True
         )
-        self.webview.setUrl(QUrl(url))
+
+        self.webview.setUrl(QUrl.fromLocalFile(os.path.abspath(url)))
         self.layout.addWidget(self.webview)
         self.layout.addWidget(self.note_area)
         self.setLayout(self.layout)

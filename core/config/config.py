@@ -1,4 +1,4 @@
-HOME_URL = "https://www.google.com"
+HOME_URL = "home//main.html"
 CACHE_DIR = "cache"
 STYLE_DIR = "styles"
 ICON_DIR = "icons"

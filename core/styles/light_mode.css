@@ -5,7 +5,6 @@ QWidget {
     background: #e8e8e8;
     font-family: 'Calibri';
     color: #000000;
-    border: 1px solid #aeaeae;
     border-radius: 8px;
 }
 
@@ -25,8 +24,17 @@ QPushButton {
     font-family: "Ubuntu";
     font-weight: 400;
     color: #000000;
-    padding: 5px 5px 5px 5px;
-    border: 1px solid #aeaeae;
+    padding: 10px 10px 10px 10px;
+    border-radius: 8px;
+}
+
+QAction {
+    background: #e8e8e8;
+    font-size: 15px;
+    font-family: "Ubuntu";
+    font-weight: 400;
+    color: #000000;
+    padding: 10px 10px 10px 10px;
     border-radius: 8px;
 }
 
@@ -36,6 +44,7 @@ QLabel {
     font-size: 14px;
     color: #000000;
     padding: 5px 5px 5px 5px;
+    border: 1px solid #aeaeae;
 }
 
 QLineEdit {

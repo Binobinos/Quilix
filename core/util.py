@@ -33,5 +33,8 @@ def save_json(
         pass
 
 def load_css(filename) -> str:
-    with open(filename, "r", encoding="utf-8") as f:
-        return f.read()
+    try:
+        with open(filename, "r", encoding="utf-8") as f:
+            return f.read()
+    except Exception as error:
+        print(error)

@@ -34,10 +34,12 @@ from config.config import (
     NOTES_FILE,
     SESSION_FILE,
     CACHE_DIR,
+    STYLE_DIR,
+    ICON_DIR,
     SETTINGS_FILE,
     DARK_STYLE,
     LIGHT_STYLE,
-    __version__, STYLE_DIR
+    __version__
 )
 from util import (
     load_json,
@@ -82,19 +84,21 @@ class ModernBrowser(QMainWindow):
         self.addToolBar(self.navbar)
 
         # Standard browser actions
-        self.back_btn = QAction(QIcon.fromTheme("go-previous"), "←", self)
+        self.create_path = lambda path: create_dir(ICON_DIR, path)
+
+        self.back_btn = QAction(QIcon(self.create_path("arrow_left_dark.png")), "←", self)
         self.back_btn.triggered.connect(self.go_back)
         self.navbar.addAction(self.back_btn)
         self.forward_btn = QAction(QIcon.fromTheme("go-next"), "→", self)
         self.forward_btn.triggered.connect(self.go_forward)
         self.navbar.addAction(self.forward_btn)
-        self.reload_btn = QAction(QIcon.fromTheme("view-refresh"), "↺", self)
+        self.reload_btn = QAction(QIcon(self.create_path("refresh_dark.png")), "↺", self)
         self.reload_btn.triggered.connect(self.reload_page)
         self.navbar.addAction(self.reload_btn)
-        self.home_btn = QAction(QIcon.fromTheme("go-home"), "🏠", self)
+        self.home_btn = QAction(QIcon(self.create_path("home_dark.png")), "🏠", self)
         self.home_btn.triggered.connect(self.go_home)
         self.navbar.addAction(self.home_btn)
-        self.fullscreen_btn = QAction(QIcon.fromTheme("view-fullscreen"), "⛶", self)
+        self.fullscreen_btn = QAction(QIcon(self.create_path("fullscreen_dark")), "⛶", self)
         self.fullscreen_btn.triggered.connect(self.toggle_fullscreen)
         self.navbar.addAction(self.fullscreen_btn)
         self.navbar.addSeparator()
@@ -104,31 +108,31 @@ class ModernBrowser(QMainWindow):
         self.address_bar.returnPressed.connect(self.smart_search)
         self.navbar.addWidget(self.address_bar)
 
-        self.new_tab_btn = QPushButton("+")
-        self.new_tab_btn.clicked.connect(lambda: self.add_tab())
-        self.navbar.addWidget(self.new_tab_btn)
+        self.new_tab_btn = QAction(QIcon(self.create_path("add_dark.png")), "New Tab", self)
+        self.new_tab_btn.triggered.connect(lambda: self.add_tab())
+        self.navbar.addAction(self.new_tab_btn)
 
-        self.session_btn = QAction(QIcon.fromTheme("document-save"), "Save Session", self)
+        self.session_btn = QAction(QIcon(self.create_path("document_save.png")), "Save Session", self)
         self.session_btn.triggered.connect(self.save_session)
         self.navbar.addAction(self.session_btn)
 
-        self.restore_btn = QAction(QIcon.fromTheme("document-open"), "Restore Session", self)
+        self.restore_btn = QAction(QIcon(self.create_path("document_open.png")), "Restore Session", self)
         self.restore_btn.triggered.connect(self.restore_session)
         self.navbar.addAction(self.restore_btn)
 
-        self.notes_btn = QAction(QIcon.fromTheme("accessories-text-editor"), "Show Notes", self)
+        self.notes_btn = QAction(QIcon(self.create_path("show_notes.png")), "Show Notes", self)
         self.notes_btn.triggered.connect(self.show_notes)
         self.navbar.addAction(self.notes_btn)
 
-        self.pomodoro_btn = QAction(QIcon.fromTheme("clock"), "Pomodoro", self)
+        self.pomodoro_btn = QAction(QIcon(self.create_path("clock_dark.png")), "Pomodoro", self)
         self.pomodoro_btn.triggered.connect(self.toggle_pomodoro)
         self.navbar.addAction(self.pomodoro_btn)
 
-        self.screenshot_btn = QAction(QIcon.fromTheme("camera-photo"), "Screenshot", self)
+        self.screenshot_btn = QAction(QIcon(self.create_path("camera.png")), "Screenshot", self)
         self.screenshot_btn.triggered.connect(self.screenshot)
         self.navbar.addAction(self.screenshot_btn)
 
-        self.change_theme_btn = QAction(QIcon.fromTheme(""), "Change Theme", self)
+        self.change_theme_btn = QAction(QIcon(self.create_path("light_mode.png")), "Change Theme", self)
         self.change_theme_btn.triggered.connect(self.change_theme)
         self.navbar.addAction(self.change_theme_btn)
 
@@ -363,10 +367,36 @@ class ModernBrowser(QMainWindow):
             enabled: bool) \
             -> None:
         if enabled:
-            self.parent_app.setStyleSheet(load_css(DARK_STYLE))
+            self.create_path = lambda path: create_dir(STYLE_DIR, path)
+            self.parent_app.setStyleSheet(load_css(self.create_path(DARK_STYLE)))
+
+            self.create_path = lambda path: create_dir(ICON_DIR, path)
+            self.back_btn.setIcon(QIcon(self.create_path("arrow_left_light.png")))
+            self.forward_btn.setIcon(QIcon(self.create_path("arrow_right_light.png")))
+            self.reload_btn.setIcon(QIcon(self.create_path("refresh_light.png")))
+            self.home_btn.setIcon(QIcon(self.create_path("home_light.png")))
+            self.fullscreen_btn.setIcon(QIcon(self.create_path("fullscreen_light.png")))
+
+            self.new_tab_btn.setIcon(QIcon(self.create_path("add_light.png")))
+            self.change_theme_btn.setIcon(QIcon(self.create_path("dark_mode.png")))
+            self.pomodoro_btn.setIcon(QIcon(self.create_path("clock_light.png")))
+
             self.settings["dark_mode"] = not enabled
         else:
-            self.parent_app.setStyleSheet(load_css(LIGHT_STYLE))
+            self.create_path = lambda path: create_dir(STYLE_DIR, path)
+            self.parent_app.setStyleSheet(load_css(self.create_path(LIGHT_STYLE)))
+
+            self.create_path = lambda path: create_dir(ICON_DIR, path)
+            self.back_btn.setIcon(QIcon(self.create_path("arrow_left_dark.png")))
+            self.forward_btn.setIcon(QIcon(self.create_path("arrow_right_dark.png")))
+            self.reload_btn.setIcon(QIcon(self.create_path("refresh_dark.png")))
+            self.home_btn.setIcon(QIcon(self.create_path("home_dark.png")))
+            self.fullscreen_btn.setIcon(QIcon(self.create_path("fullscreen_dark.png")))
+
+            self.new_tab_btn.setIcon(QIcon(self.create_path("add_dark.png")))
+            self.change_theme_btn.setIcon(QIcon(self.create_path("light_mode.png")))
+            self.pomodoro_btn.setIcon(QIcon(self.create_path("clock_dark.png")))
+
             self.settings["dark_mode"] = not enabled
 
     def tab_context_menu(

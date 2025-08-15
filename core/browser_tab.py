@@ -118,6 +118,12 @@ class BrowserTab(QWidget):
             reload_action = QAction(QIcon.fromTheme("view-refresh"), "Reload", self)
             reload_action.triggered.connect(self.webview.reload)
 
+            copy_action = QAction(QIcon.fromTheme("edit-copy"), "Copy", self)
+            copy_action.triggered.connect(self.copy_current_url)
+
+            paste_action = QAction(QIcon.fromTheme("edit-paste"), "Paste", self)
+            paste_action.triggered.connect(self.paste_url)
+
             copy_url_action = QAction(QIcon.fromTheme("edit-copy"), "Copy URL", self)
             copy_url_action.triggered.connect(self.copy_current_url)
 
@@ -133,6 +139,9 @@ class BrowserTab(QWidget):
             menu.addAction(back_action)
             menu.addAction(forward_action)
             menu.addAction(reload_action)
+            menu.addSeparator()
+            menu.addAction(copy_action)
+            menu.addAction(paste_action)
             menu.addSeparator()
             menu.addAction(copy_url_action)
             menu.addAction(paste_url_action)
@@ -201,7 +210,6 @@ class BrowserTab(QWidget):
         or navigate to it directly if it's a valid URL.
         """
         clipboard = QGuiApplication.clipboard()
-
         if url := clipboard.text().strip():
             self.webview.page().runJavaScript(f"""
                 const activeElement = document.activeElement;

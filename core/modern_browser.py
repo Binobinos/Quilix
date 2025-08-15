@@ -28,7 +28,7 @@ from PyQt6.QtWidgets import (
     QTabWidget,
     QToolBar,
     QWidget,
-    QApplication
+    QApplication, QTabBar
 )
 
 from browser_tab import BrowserTab
@@ -38,7 +38,6 @@ from config.config import (
     HOME_URL,
     NOTES_FILE,
     SESSION_FILE,
-    CACHE_DIR,
     STYLE_DIR,
     ICON_DIR,
     SETTINGS_FILE,
@@ -92,15 +91,12 @@ class ModernBrowser(QMainWindow):
 
         # --- State Initialization ---
         self.parent_app = app
-        self.create_path = lambda path: create_dir(CACHE_DIR, path)
-
         # Load persistent data
-        self.session = load_json(self.create_path(SESSION_FILE), [])
-        self.bookmarks = load_json(self.create_path(BOOKMARKS_FILE), [])
-        self.history = load_json(self.create_path(HISTORY_FILE), [])
-        self.settings = load_json(self.create_path(SETTINGS_FILE),
-                                  {"home_url": HOME_URL, "dark_mode": False})
-        self.notes = load_json(self.create_path(NOTES_FILE), {})
+        self.session = load_json(SESSION_FILE, [])
+        self.bookmarks = load_json(BOOKMARKS_FILE, [])
+        self.history = load_json(HISTORY_FILE, [])
+        self.settings = load_json(SETTINGS_FILE, {"home_url": HOME_URL, "dark_mode": False})
+        self.notes = load_json(NOTES_FILE, {})
 
         # Pomodoro setup
         self.pomodoro_timer = QTimer(self)
@@ -114,20 +110,30 @@ class ModernBrowser(QMainWindow):
 
         # Apply theme and create initial tab
         self.change_theme()
-        self.add_tab()
-
+        self.add_plus_tab()
+        self.restore_session()
         # Connect timer signal
         self.pomodoro_timer.timeout.connect(self.pomodoro_tick)
+
+    def closeEvent(self, event) -> None:
+        self.save_session()
+        event.accept()
 
     def _init_tab_widget(self) -> None:
         """Initialize the tab widget with configuration and signals."""
         self.tabs = QTabWidget()
         self.tabs.setTabsClosable(True)
+        self.tabs.tabBarClicked.connect(self.on_tab_clicked)
         self.tabs.tabCloseRequested.connect(self.close_tab)
         self.tabs.currentChanged.connect(self.update_navbar)
         self.tabs.tabBar().setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.tabs.tabBar().customContextMenuRequested.connect(self.tab_context_menu)
         self.setCentralWidget(self.tabs)
+
+    def on_tab_clicked(self, index):
+        """Обработчик клика по вкладке"""
+        if index == self.tabs.count() - 1:
+            self.add_tab()
 
     def _init_navigation_bar(self) -> None:
         """Initialize the navigation toolbar with buttons and actions."""
@@ -176,8 +182,7 @@ class ModernBrowser(QMainWindow):
             text: Button text
             callback: Function to connect
         """
-        self.create_path = lambda path: create_dir(ICON_DIR, path)
-        btn = QAction(QIcon(self.create_path(icon_name)), text, self)
+        btn = QAction(QIcon(icon_name), text, self)
         btn.triggered.connect(callback)
         self.navbar.addAction(btn)
 
@@ -190,10 +195,18 @@ class ModernBrowser(QMainWindow):
             text: Button text
             callback: Function to connect
         """
-        self.create_path = lambda path: create_dir(ICON_DIR, path)
-        action = QAction(QIcon(self.create_path(icon_name)), text, self)
+        action = QAction(QIcon(icon_name), text, self)
         action.triggered.connect(callback)
         self.navbar.addAction(action)
+
+    def add_plus_tab(self):
+        """Добавляет специальную вкладку с плюсиком"""
+        self.tabs.addTab(QWidget(), "+")
+        self.tabs.tabBar().setTabButton(
+            self.tabs.count() - 1,
+            QTabBar.ButtonPosition.RightSide,
+            None
+        )
 
     def add_tab(
             self,
@@ -212,6 +225,8 @@ class ModernBrowser(QMainWindow):
         - Restores any existing notes for the tab
         """
         url = url or self.settings.get("home_url", HOME_URL)
+        if self.tabs.count() > 0 and self.tabs.tabText(self.tabs.count() - 1) == "+":
+            self.tabs.removeTab(self.tabs.count() - 1)
         tab = BrowserTab(self, url=url)
         idx = self.tabs.addTab(tab, "New Tab")
         tab.webview.urlChanged.connect(lambda qurl, t=tab: self.update_address_bar(qurl, t))
@@ -222,6 +237,7 @@ class ModernBrowser(QMainWindow):
         if tab.tab_id in self.notes:
             tab.note_area.setText(self.notes[tab.tab_id])
         self.tabs.setCurrentIndex(idx)
+        self.add_plus_tab()
 
     def close_tab(
             self,
@@ -236,7 +252,10 @@ class ModernBrowser(QMainWindow):
         Ensures at least one tab remains open by creating
         a new tab if closing the last one.
         """
-        self.tabs.removeTab(idx)
+        if idx != self.tabs.count() - 1:  # Не закрываем плюсик
+            self.tabs.removeTab(idx)
+            self.tabs.removeTab(self.tabs.count() - 1)
+            self.add_plus_tab()
         if self.tabs.count() < 1:
             self.add_tab()
 
@@ -371,10 +390,12 @@ class ModernBrowser(QMainWindow):
         or silently fails on error (prints exception to console).
         """
         try:
-            sessions = [{"url": tab.webview.url().toString()} for i in range(self.tabs.count()) if
+            tab: BrowserTab
+            sessions = [{"url": None if HOME_URL in (text := tab.webview.url().toString()) else text} for i in
+                        range(self.tabs.count()) if
                        isinstance((tab := self.tabs.widget(i)), BrowserTab)]
-            save_json(self.create_path(SESSION_FILE), sessions)
-            QMessageBox.information(self, "Session", "Session saved!")
+            save_json(SESSION_FILE, sessions)
+            # QMessageBox.information(self, "Session", "Session saved!")
         except Exception as e:
             print(e)
 
@@ -388,9 +409,13 @@ class ModernBrowser(QMainWindow):
         Uses default empty list if no session exists.
         """
         self.tabs.clear()
-        self.session = load_json(self.create_path(SESSION_FILE), [])
-        for tab in self.session:
-            self.add_tab(tab["url"])
+        self.session = load_json(SESSION_FILE, [])
+        if self.session:
+            for tab in self.session:
+                print(tab)
+                self.add_tab(tab["url"])
+            return
+        self.add_tab()
 
     def save_note(
             self,
@@ -405,7 +430,7 @@ class ModernBrowser(QMainWindow):
         Saves notes in JSON format with the tab's unique ID as key.
         """
         self.notes[tab.tab_id] = tab.note_area.toPlainText()
-        save_json(self.create_path(NOTES_FILE), self.notes)
+        save_json(NOTES_FILE, self.notes)
 
     def show_notes(
             self) \
@@ -545,7 +570,7 @@ class ModernBrowser(QMainWindow):
         title = tab.webview.title() or url
         if url and (not self.history or self.history[-1]["url"] != url):
             self.history.append({"title": title, "url": url})
-            save_json(self.create_path(HISTORY_FILE), self.history)
+            save_json(HISTORY_FILE, self.history)
 
     def toggle_fullscreen(
             self) \
@@ -584,9 +609,7 @@ class ModernBrowser(QMainWindow):
         Updates application stylesheet and persists preference.
         """
         if enabled:
-            self.create_path = lambda path: create_dir(STYLE_DIR, path)
-            self.parent_app.setStyleSheet(load_css(self.create_path(DARK_STYLE)))
-
+            self.parent_app.setStyleSheet(load_css(DARK_STYLE))
             self.create_path = lambda path: create_dir(ICON_DIR, path)
             self.navbar.actions()[0].setIcon(QIcon(self.create_path("arrow_left_light.png")))
             self.navbar.actions()[1].setIcon(QIcon(self.create_path("arrow_right_light.png")))
@@ -601,7 +624,7 @@ class ModernBrowser(QMainWindow):
             self.settings["dark_mode"] = not enabled
         else:
             self.create_path = lambda path: create_dir(STYLE_DIR, path)
-            self.parent_app.setStyleSheet(load_css(self.create_path(LIGHT_STYLE)))
+            self.parent_app.setStyleSheet(load_css(LIGHT_STYLE))
 
             self.create_path = lambda path: create_dir(ICON_DIR, path)
             self.navbar.actions()[0].setIcon(QIcon(self.create_path("arrow_left_dark.png")))

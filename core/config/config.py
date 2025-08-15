@@ -17,25 +17,25 @@ CACHE_DIR = "cache"
 STYLE_DIR = "styles"
 """str: Directory name containing CSS style sheets for the application."""
 
-BOOKMARKS_FILE = "quilix_bookmarks.json"
+BOOKMARKS_FILE = "cache//quilix_bookmarks.json"
 """str: Filename for storing browser bookmarks in JSON format."""
 
-HISTORY_FILE = "quilix_history.json"
+HISTORY_FILE = "cache//quilix_history.json"
 """str: Filename for storing browsing history in JSON format."""
 
-SETTINGS_FILE = "quilix_settings.json"
+SETTINGS_FILE = "cache//quilix_settings.json"
 """str: Filename for storing application settings in JSON format."""
 
-SESSION_FILE = "quilix_session.json"
+SESSION_FILE = "cache//quilix_session.json"
 """str: Filename for storing session data in JSON format."""
 
-NOTES_FILE = "quilix_notes.json"
+NOTES_FILE = "cache//quilix_notes.json"
 """str: Filename for storing user notes in JSON format."""
 
-DARK_STYLE = "dark_mode.css"
+DARK_STYLE = "styles//dark_mode.css"
 """str: Path to the dark mode stylesheet."""
 
-LIGHT_STYLE = "light_mode.css"
+LIGHT_STYLE = "styles//light_mode.css"
 """str: Path to the light mode stylesheet."""
 
 __version__ = "Quilix Version 7.0.0M ENG"

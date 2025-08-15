@@ -12,6 +12,8 @@ from typing import (
     LiteralString, TypeVar
 )
 
+from core.model.setting_model import Setting
+
 T = TypeVar("T", list[Any], dict[str, str])
 
 
@@ -39,7 +41,8 @@ def load_json(
     try:
         with open(filename, "r") as f:
             return json.load(f)
-    except Exception:
+    except Exception as e:
+        print(e)
         return default
 
 
@@ -91,8 +94,8 @@ def save_json(
     try:
         with open(filename, "w") as f:
             json.dump(content, f)
-    except Exception:
-        pass
+    except Exception as e:
+        print(e)
 
 
 def load_css(
@@ -117,3 +120,18 @@ def load_css(
     """
     with open(filename, "r", encoding="utf-8") as f:
         return f.read()
+
+
+def generate_setting(setting_path: str) -> Setting:
+    setting = {
+
+    }
+    return
+
+
+def load_setting(setting_path: str) -> Setting:
+    pass
+
+
+def save_setting(new_setting: Setting, setting_path: str) -> None:
+    pass

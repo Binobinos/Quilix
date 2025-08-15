@@ -33,7 +33,7 @@ class BrowserTab(QWidget):
     def __init__(
             self,
             parent: "ModernBrowser",
-            url: str = HOME_URL,
+            url: str = PAGE_URL,
             tab_id: Any = None) \
             -> None:
         """
@@ -82,7 +82,10 @@ class BrowserTab(QWidget):
             QWebEngineSettings.WebAttribute.LocalContentCanAccessRemoteUrls, True
         )
 
-        self.webview.setUrl(QUrl.fromLocalFile(os.path.abspath(PAGE_URL)))
+        if url == PAGE_URL:
+            self.webview.setUrl(QUrl.fromLocalFile(os.path.abspath(PAGE_URL)))
+        else:
+            self.webview.setUrl(QUrl(url))
         self.layout.addWidget(self.webview)
         self.layout.addWidget(self.note_area)
         self.setLayout(self.layout)

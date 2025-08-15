@@ -12,7 +12,7 @@ from typing import (
     LiteralString, TypeVar
 )
 
-from core.model.setting_model import Setting
+from model.setting_model import Setting
 
 T = TypeVar("T", list[Any], dict[str, str])
 

@@ -6,6 +6,7 @@ session management, note-taking, and productivity features.
 """
 
 from typing import Any
+import os
 
 from PyQt6.QtCore import (
     QPoint,
@@ -36,6 +37,7 @@ from config.config import (
     BOOKMARKS_FILE,
     HISTORY_FILE,
     HOME_URL,
+    PAGE_URL,
     NOTES_FILE,
     SESSION_FILE,
     STYLE_DIR,
@@ -133,7 +135,7 @@ class ModernBrowser(QMainWindow):
     def on_tab_clicked(self, index):
         """Обработчик клика по вкладке"""
         if index == self.tabs.count() - 1:
-            self.add_tab()
+            self.add_tab(PAGE_URL)
 
     def _init_navigation_bar(self) -> None:
         """Initialize the navigation toolbar with buttons and actions."""
@@ -157,21 +159,11 @@ class ModernBrowser(QMainWindow):
 
         # Tab and session management
         self.create_path = lambda path: create_dir(ICON_DIR, path)
-        self.new_tab_btn = QPushButton()
-        self.new_tab_btn.setObjectName("add")
-        self.new_tab_btn.setIcon(QIcon(self.create_path("add_dark.png")))
-        self.new_tab_btn.clicked.connect(lambda: self.add_tab())
-        self.navbar.addWidget(self.new_tab_btn)
-
         # Feature buttons
         self._add_action_button("clock_dark.png", "Pomodoro", self.toggle_pomodoro)
-        self._add_action_button("document_save.png", "Save Session", self.save_session)
-        self._add_action_button("document_open.png", "Restore Session", self.restore_session)
         self._add_action_button("show_notes.png", "Show Notes", self.show_notes)
         self._add_action_button("camera.png", "Screenshot", self.screenshot)
         self._add_action_button("light_mode.png", "Change Theme", self.change_theme)
-
-        print(self.navbar.actions()[0])
 
     def _add_nav_button(self, icon_name: str, text: str, callback) -> None:
         """
@@ -224,7 +216,7 @@ class ModernBrowser(QMainWindow):
         - Connects note saving
         - Restores any existing notes for the tab
         """
-        url = url or self.settings.get("home_url", HOME_URL)
+        url = url or self.settings.get("home_url", PAGE_URL)
         if self.tabs.count() > 0 and self.tabs.tabText(self.tabs.count() - 1) == "+":
             self.tabs.removeTab(self.tabs.count() - 1)
         tab = BrowserTab(self, url=url)
@@ -325,7 +317,7 @@ class ModernBrowser(QMainWindow):
         If no tab is active, does nothing.
         """
         if tab := self.get_current_tab():
-            tab.webview.setUrl(QUrl(self.settings.get("home_url", HOME_URL)))
+            tab.webview.setUrl(QUrl.fromLocalFile(os.path.abspath(PAGE_URL)))
 
     def smart_search(
             self) \
@@ -617,9 +609,10 @@ class ModernBrowser(QMainWindow):
             self.navbar.actions()[3].setIcon(QIcon(self.create_path("home_light.png")))
             self.navbar.actions()[4].setIcon(QIcon(self.create_path("fullscreen_light.png")))
 
-            self.navbar.findChild(QPushButton, "add").setIcon(QIcon(self.create_path("add_light.png")))
-            self.navbar.actions()[13].setIcon(QIcon(self.create_path("dark_mode.png")))
-            self.navbar.actions()[8].setIcon(QIcon(self.create_path("clock_light.png")))
+            self.navbar.actions()[-1].setIcon(QIcon(self.create_path("dark_mode.png")))
+            self.navbar.actions()[-2].setIcon(QIcon(self.create_path("camera.png")))
+            self.navbar.actions()[-3].setIcon(QIcon(self.create_path("show_notes.png")))
+            self.navbar.actions()[-4].setIcon(QIcon(self.create_path("clock_light.png")))
 
             self.settings["dark_mode"] = not enabled
         else:
@@ -633,9 +626,10 @@ class ModernBrowser(QMainWindow):
             self.navbar.actions()[3].setIcon(QIcon(self.create_path("home_dark.png")))
             self.navbar.actions()[4].setIcon(QIcon(self.create_path("fullscreen_dark.png")))
 
-            self.navbar.findChild(QPushButton, "add").setIcon(QIcon(self.create_path("add_dark.png")))
-            self.navbar.actions()[13].setIcon(QIcon(self.create_path("light_mode.png")))
-            self.navbar.actions()[8].setIcon(QIcon(self.create_path("clock_dark.png")))
+            self.navbar.actions()[-1].setIcon(QIcon(self.create_path("light_mode.png")))
+            self.navbar.actions()[-2].setIcon(QIcon(self.create_path("camera.png")))
+            self.navbar.actions()[-3].setIcon(QIcon(self.create_path("show_notes.png")))
+            self.navbar.actions()[-4].setIcon(QIcon(self.create_path("clock_dark.png")))
 
             self.settings["dark_mode"] = not enabled
 

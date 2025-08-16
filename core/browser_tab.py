@@ -9,13 +9,13 @@ import os
 from typing import Any
 
 from PyQt6.QtCore import QUrl, Qt
-from PyQt6.QtGui import QAction, QGuiApplication, QIcon
-from PyQt6.QtWebEngineCore import QWebEngineSettings
+from PyQt6.QtGui import QAction, QGuiApplication, QIcon, QShortcut
+from PyQt6.QtWebEngineCore import QWebEngineSettings, QWebEnginePage
 from PyQt6.QtWebEngineWidgets import QWebEngineView
 from PyQt6.QtWidgets import (QMenu, QMessageBox, QMainWindow, QTextEdit,
                              QWidget, QVBoxLayout)
 
-from config.config import HOME_URL, PAGE_URL
+from config.config import PAGE_URL
 
 
 class BrowserTab(QWidget):
@@ -121,11 +121,14 @@ class BrowserTab(QWidget):
             reload_action = QAction(QIcon.fromTheme("view-refresh"), "Reload", self)
             reload_action.triggered.connect(self.webview.reload)
 
-            copy_action = QAction(QIcon.fromTheme("edit-copy"), "Copy", self)
-            copy_action.triggered.connect(self.copy_current_url)
+            copy_text_action = QAction(QIcon.fromTheme("edit-copy"), "Copy Text", self)
+            copy_text_action.triggered.connect(self.copy_text)
 
-            paste_action = QAction(QIcon.fromTheme("edit-paste"), "Paste", self)
-            paste_action.triggered.connect(self.paste_url)
+            paste_text_action = QAction(QIcon.fromTheme("edit-paste"), "Paste Text", self)
+            paste_text_action.triggered.connect(self.paste_text)
+
+            cut_text_action = QAction(QIcon.fromTheme("edit-cut"), "Cut Text", self)
+            cut_text_action.triggered.connect(self.cut_text)
 
             copy_url_action = QAction(QIcon.fromTheme("edit-copy"), "Copy URL", self)
             copy_url_action.triggered.connect(self.copy_current_url)
@@ -143,8 +146,9 @@ class BrowserTab(QWidget):
             menu.addAction(forward_action)
             menu.addAction(reload_action)
             menu.addSeparator()
-            menu.addAction(copy_action)
-            menu.addAction(paste_action)
+            menu.addAction(copy_text_action)
+            menu.addAction(cut_text_action)
+            menu.addAction(paste_text_action)
             menu.addSeparator()
             menu.addAction(copy_url_action)
             menu.addAction(paste_url_action)
@@ -158,6 +162,24 @@ class BrowserTab(QWidget):
             print(f"Error in context menu: {e}")
             import traceback
             traceback.print_exc()
+
+    def setup_shortcuts(self):
+        """Setup keyboard shortcuts for common actions."""
+        QShortcut("Ctrl+C", self.webview, self.copy_text)
+        QShortcut("Ctrl+V", self.webview, self.paste_text)
+        QShortcut("Ctrl+X", self.webview, self.cut_text)
+
+    def copy_text(self):
+        """Copy selected text to clipboard."""
+        self.webview.page().triggerAction(QWebEnginePage.WebAction.Copy)
+
+    def paste_text(self):
+        """Paste text from clipboard into focused input field."""
+        self.webview.page().triggerAction(QWebEnginePage.WebAction.Paste)
+
+    def cut_text(self):
+        """Cut selected text to clipboard."""
+        self.webview.page().triggerAction(QWebEnginePage.WebAction.Cut)
 
     def inspect_page(self):
         """

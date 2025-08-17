@@ -5,8 +5,8 @@ This module provides the main browser window class with tabbed browsing,
 session management, note-taking, and productivity features.
 """
 
-from typing import Any
 import os
+from typing import Any
 
 from PyQt6.QtCore import (
     QPoint,
@@ -18,6 +18,7 @@ from PyQt6.QtGui import (
     QAction,
     QIcon
 )
+from PyQt6.QtWebEngineWidgets import QWebEngineView
 from PyQt6.QtWidgets import (
     QFileDialog,
     QInputDialog,
@@ -25,11 +26,11 @@ from PyQt6.QtWidgets import (
     QMainWindow,
     QMenu,
     QMessageBox,
-    QPushButton,
     QTabWidget,
     QToolBar,
     QWidget,
-    QApplication, QTabBar
+    QApplication,
+    QTabBar
 )
 
 from browser_tab import BrowserTab
@@ -99,7 +100,11 @@ class ModernBrowser(QMainWindow):
         self.history = load_json(HISTORY_FILE, [])
         self.settings = load_json(SETTINGS_FILE, {"home_url": HOME_URL, "dark_mode": False})
         self.notes = load_json(NOTES_FILE, {})
+        self.web_view = QWebEngineView()
+        self.setCentralWidget(self.web_view)
 
+        # Включаем поддержку загрузок
+        self.web_view.page().profile().downloadRequested.connect(self.handle_download)
         # Pomodoro setup
         self.pomodoro_timer = QTimer(self)
         self.pomodoro_state = "idle"
@@ -220,7 +225,7 @@ class ModernBrowser(QMainWindow):
         if self.tabs.count() > 0 and self.tabs.tabText(self.tabs.count() - 1) == "+":
             self.tabs.removeTab(self.tabs.count() - 1)
         tab = BrowserTab(self, url=url)
-        idx = self.tabs.addTab(tab, "New Tab")
+        idx = self.tabs.addTab(tab, "")
         tab.webview.urlChanged.connect(lambda qurl, t=tab: self.update_address_bar(qurl, t))
         tab.webview.titleChanged.connect(lambda title, i=idx: self.update_tab_title(title, i))
         tab.webview.iconChanged.connect(lambda icon, i=idx: self.set_tab_icon(i, icon))
@@ -248,7 +253,7 @@ class ModernBrowser(QMainWindow):
             self.tabs.removeTab(idx)
             self.tabs.removeTab(self.tabs.count() - 1)
             self.add_plus_tab()
-        if self.tabs.count() < 1:
+        if self.tabs.count() <= 1:
             self.add_tab()
 
     def update_navbar(
@@ -265,7 +270,7 @@ class ModernBrowser(QMainWindow):
 
     def get_current_tab(
             self) \
-            -> QWidget | None:
+            -> BrowserTab | None:
         """
         Retrieve the currently active browser tab.
 
@@ -525,7 +530,7 @@ class ModernBrowser(QMainWindow):
 
         Uses "New Tab" if title is empty.
         """
-        self.tabs.setTabText(idx, title if title else "New Tab")
+        self.tabs.setTabText(idx, f"{title[:20]}..." if len(title) > 20 else title if title else "New Tab")
 
     def set_tab_icon(
             self,
@@ -543,6 +548,22 @@ class ModernBrowser(QMainWindow):
         """
         if not icon.isNull():
             self.tabs.setTabIcon(idx, icon)
+
+    def handle_download(self, download):
+        path, _ = QFileDialog.getSaveFileName(
+            self, "Сохранить файл",
+            download.suggestedFileName()
+        )
+
+        if path:
+            download.setPath(path)
+            download.accept()
+            download.finished.connect(self.on_download_finished)
+        else:
+            download.cancel()
+
+    def on_download_finished(self):
+        print("Загрузка завершена!")
 
     def save_history(
             self,

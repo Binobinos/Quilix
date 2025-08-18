@@ -34,4 +34,4 @@ Especially needed:
 
 - Designer **Ratimir838** - https://github.com/Ratimir838
 
-- Compiler and developer **logqch** - t.me/bio_logqch_freelance
+- Compiler and developer **logqch** - https://t.me/bio_logqch_freelance

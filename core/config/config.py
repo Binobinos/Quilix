@@ -8,7 +8,7 @@ and Qt WebEngine flags.
 PAGE_URL = "home//main.html"
 """str: The default homepage URL that loads when the browser starts."""
 
-HOME_URL = "home//main.html"
+HOME_URL = "https://google.com"
 """str: The default search engine"""
 
 ICON_DIR = "icons"
@@ -54,21 +54,6 @@ FLAGS = {
     ),
     "QT_QPA_PLATFORMTHEME": ""
 }
-
-DEFAULT_SETTING = {
-    "language": "ru",
-    "theme": "dark",
-    "home_url": HOME_URL,
-    "history": [],
-    "size_window": {
-        "x": 0,
-        "y": 0,
-        "width": 200,
-        "height": 900,
-    },
-    "last_session": []
-}
-
 """dict: Qt WebEngine configuration flags.
 
 The flags control various aspects of the browser engine behavior:

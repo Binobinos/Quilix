@@ -1,20 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&family=Kanit:wght@200;400&family=Prompt:wght@600&family=Ubuntu:ital,wght@0,300;0,700;1,300;1,700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@1,300&display=swap');
-
+* {
+    margin: 0;
+    padding: 0;
+}
 QWidget {
     background: #3c3c3c;
     font-family: 'Calibri';
-    border-radius: 8px;
     color: #e8e8e8;
 }
 
 QMainWindow {
     background: #3c3c3c;
-    margin-top: 0px;
-    margin-bottom: 0px;
-    padding: 15px 15px 15px 15px;
-    border: 1px solid #282828;
-    border-radius: 8px;
     color: #e8e8e8;
 }
 
@@ -24,8 +21,6 @@ QPushButton {
     font-family: "Ubuntu";
     font-weight: 400;
     color: #e8e8e8;
-    padding: 10px 10px 10px 10px;
-    border-radius: 8px;
 }
 
 QAction {
@@ -34,8 +29,6 @@ QAction {
     font-family: "Ubuntu";
     font-weight: 400;
     color: #e8e8e8;
-    padding: 10px 10px 10px 10px;
-    border-radius: 8px;
 }
 
 QLabel {
@@ -43,8 +36,6 @@ QLabel {
     font-family: 'Ubuntu';
     font-size: 14px;
     color: #e8e8e8;
-    padding: 5px 5px 5px 5px;
-    border: 1px solid #282828;
 }
 
 QLineEdit {
@@ -52,7 +43,4 @@ QLineEdit {
     font-family: "Ubuntu";
     font-size: 14px;
     color: #e8e8e8;
-    padding: 5px 5px 5px 5px;
-    border: 1px solid #282828;
-    border-radius: 8px;
 }

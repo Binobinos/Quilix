@@ -1,9 +1,4 @@
-from typing import (
-    TypedDict,
-    Literal,
-    NotRequired,
-    Required
-)
+from typing import TypedDict, Literal
 
 
 class ItemHistory(TypedDict):
@@ -19,15 +14,10 @@ class SizeWindow(TypedDict):
 
 
 class Setting(TypedDict):
-    language: NotRequired[Literal["ru", "eng"]]
-    is_fullscreen: bool
-    theme: Literal["dark", "light"]
-    dark_mode: bool
+    language: str
+    theme: str
+    home_page: Literal["last", "custom", "new"]
     home_url: str
-    size_window: Required[SizeWindow]
-    history: NotRequired[list[ItemHistory]]
-    notes: NotRequired[dict[str, str]]
-    last_session: NotRequired[list[ItemHistory]]
-    last_session_index: NotRequired[int]
-    pomodoro_state: NotRequired[Literal["idle", "running"]]
-    pomodoro_time: NotRequired[int]
+    history: list[ItemHistory]
+    size_window: SizeWindow
+    last_session: list[ItemHistory]

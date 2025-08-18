@@ -12,7 +12,7 @@ from PyQt6.QtCore import (
     QPoint,
     Qt,
     QTimer,
-    QUrl
+    QUrl, QSize, QSettings
 )
 from PyQt6.QtGui import (
     QAction,
@@ -35,21 +35,15 @@ from PyQt6.QtWidgets import (
 
 from browser_tab import BrowserTab
 from config.config import (
-    BOOKMARKS_FILE,
     HISTORY_FILE,
-    HOME_URL,
     PAGE_URL,
-    NOTES_FILE,
-    SESSION_FILE,
-    STYLE_DIR,
     ICON_DIR,
-    SETTINGS_FILE,
     DARK_STYLE,
     LIGHT_STYLE,
     __version__
 )
+from core.model.setting_model import ItemHistory
 from util import (
-    load_json,
     save_json,
     create_dir,
     load_css
@@ -89,17 +83,26 @@ class ModernBrowser(QMainWindow):
         - Default styling and initial tab
         """
         super().__init__()
-        self.setWindowTitle(__version__)
-        self.setGeometry(100, 100, 1400, 900)
-
-        # --- State Initialization ---
         self.parent_app = app
-        # Load persistent data
-        self.session = load_json(SESSION_FILE, [])
-        self.bookmarks = load_json(BOOKMARKS_FILE, [])
-        self.history = load_json(HISTORY_FILE, [])
-        self.settings = load_json(SETTINGS_FILE, {"home_url": HOME_URL, "dark_mode": False})
-        self.notes = load_json(NOTES_FILE, {})
+        self.setWindowTitle(__version__)
+
+        # Initialize QSettings
+        self.qsettings = QSettings("Quilix", "Quilix")
+
+        # Load window geometry
+        size = self.qsettings.value("window/size", QSize(1400, 900))
+        position = self.qsettings.value("window/position", QPoint(0, 0))
+        self.resize(size)
+        self.move(position)
+
+        # Load other settings with defaults
+        self.dark_mode = self.qsettings.value("appearance/dark_mode", False, type=bool)
+        self.home_url = self.qsettings.value("navigation/home_url", PAGE_URL)
+        self.session = self.qsettings.value("session/last_session", [])
+        self.session_index = self.qsettings.value("session/last_session_index", 0, type=int)
+        self.history = self.qsettings.value("history/items", [])
+        self.notes = self.qsettings.value("notes/all", {})
+
         self.web_view = QWebEngineView()
         self.setCentralWidget(self.web_view)
 
@@ -107,14 +110,14 @@ class ModernBrowser(QMainWindow):
         self.web_view.page().profile().downloadRequested.connect(self.handle_download)
         # Pomodoro setup
         self.pomodoro_timer = QTimer(self)
-        self.pomodoro_state = "idle"
-        self.pomodoro_time = 0
+        self.pomodoro_state = self.qsettings.value("pomodoro/state", "idle")
+        self.pomodoro_time = self.qsettings.value("pomodoro/time", 0)
 
         # --- UI Initialization ---
         self._init_tab_widget()
         self._init_navigation_bar()
-        self.is_fullscreen = False
-
+        self.is_fullscreen = self.qsettings.value("window/fullscreen", False)
+        self.showFullScreen()
         # Apply theme and create initial tab
         self.change_theme()
         self.add_plus_tab()
@@ -122,7 +125,32 @@ class ModernBrowser(QMainWindow):
         # Connect timer signal
         self.pomodoro_timer.timeout.connect(self.pomodoro_tick)
 
+    def keyPressEvent(self, event):
+        # F11 - переключение полноэкранного режима
+        if event.key() == Qt.Key.Key_F11:
+            self.toggle_fullscreen()
+        else:
+            super().keyPressEvent(event)
+
+    def toggle_fullscreen(self):
+        if self.isFullScreen():
+            self.showNormal()
+        else:
+            self.showFullScreen()
+
     def closeEvent(self, event) -> None:
+        # Save window geometry
+        self.qsettings.setValue("window/size", self.size())
+        self.qsettings.setValue("window/position", self.pos())
+
+        # Save other settings
+        self.qsettings.setValue("appearance/dark_mode", self.dark_mode)
+        self.qsettings.setValue("navigation/home_url", self.home_url)
+        self.qsettings.setValue("session/last_session_index", self.session_index)
+        self.qsettings.setValue("history/items", self.history)
+        self.qsettings.setValue("notes/all", self.notes)
+        self.qsettings.setValue("window/fullscreen", self.isFullScreen())
+        # Save session if needed
         self.save_session()
         event.accept()
 
@@ -140,7 +168,7 @@ class ModernBrowser(QMainWindow):
     def on_tab_clicked(self, index):
         """Обработчик клика по вкладке"""
         if index == self.tabs.count() - 1:
-            self.add_tab(PAGE_URL)
+            self.add_tab(self.home_url)
 
     def _init_navigation_bar(self) -> None:
         """Initialize the navigation toolbar with buttons and actions."""
@@ -221,7 +249,7 @@ class ModernBrowser(QMainWindow):
         - Connects note saving
         - Restores any existing notes for the tab
         """
-        url = url or self.settings.get("home_url", PAGE_URL)
+        url = url or self.home_url
         if self.tabs.count() > 0 and self.tabs.tabText(self.tabs.count() - 1) == "+":
             self.tabs.removeTab(self.tabs.count() - 1)
         tab = BrowserTab(self, url=url)
@@ -356,13 +384,6 @@ class ModernBrowser(QMainWindow):
             self.toggle_pomodoro()
             return
 
-        for bookmark in self.bookmarks:
-            url = bookmark["url"]
-
-            if text in bookmark["title"].lower() or text in url.lower():
-                self.add_tab(url)
-                return
-
         for item in reversed(self.history):
             url = item["url"]
 
@@ -388,11 +409,12 @@ class ModernBrowser(QMainWindow):
         """
         try:
             tab: BrowserTab
-            sessions = [{"url": None if HOME_URL in (text := tab.webview.url().toString()) else text} for i in
+            sessions: list[ItemHistory] = [{"title": tab.webview.title(),
+                                            "url": tab.webview.url().toString()} for i in
                         range(self.tabs.count()) if
                        isinstance((tab := self.tabs.widget(i)), BrowserTab)]
-            save_json(SESSION_FILE, sessions)
-            # QMessageBox.information(self, "Session", "Session saved!")
+            self.qsettings.setValue("session/last_session", sessions)
+            self.qsettings.setValue("session/last_session_index", self.tabs.currentIndex())
         except Exception as e:
             print(e)
 
@@ -406,11 +428,11 @@ class ModernBrowser(QMainWindow):
         Uses default empty list if no session exists.
         """
         self.tabs.clear()
-        self.session = load_json(SESSION_FILE, [])
         if self.session:
             for tab in self.session:
                 print(tab)
                 self.add_tab(tab["url"])
+            self.tabs.setCurrentIndex(self.session_index)
             return
         self.add_tab()
 
@@ -427,7 +449,7 @@ class ModernBrowser(QMainWindow):
         Saves notes in JSON format with the tab's unique ID as key.
         """
         self.notes[tab.tab_id] = tab.note_area.toPlainText()
-        save_json(NOTES_FILE, self.notes)
+        self.settings["notes"] = self.notes
 
     def show_notes(
             self) \
@@ -607,7 +629,10 @@ class ModernBrowser(QMainWindow):
 
         Delegates to apply_dark_mode using current settings.
         """
-        self.apply_dark_mode(self.settings.get("dark_mode"))
+        value = self.qsettings.value("mode/dark", False)
+        print(value)
+        self.apply_dark_mode(value)
+        self.qsettings.setValue("mode/dark", not value)
 
     def apply_dark_mode(
             self,
@@ -621,9 +646,9 @@ class ModernBrowser(QMainWindow):
 
         Updates application stylesheet and persists preference.
         """
+        self.create_path = lambda path: create_dir(ICON_DIR, path)
         if enabled:
             self.parent_app.setStyleSheet(load_css(DARK_STYLE))
-            self.create_path = lambda path: create_dir(ICON_DIR, path)
             self.navbar.actions()[0].setIcon(QIcon(self.create_path("arrow_left_light.png")))
             self.navbar.actions()[1].setIcon(QIcon(self.create_path("arrow_right_light.png")))
             self.navbar.actions()[2].setIcon(QIcon(self.create_path("refresh_light.png")))
@@ -634,13 +659,9 @@ class ModernBrowser(QMainWindow):
             self.navbar.actions()[-2].setIcon(QIcon(self.create_path("camera.png")))
             self.navbar.actions()[-3].setIcon(QIcon(self.create_path("show_notes.png")))
             self.navbar.actions()[-4].setIcon(QIcon(self.create_path("clock_light.png")))
-
-            self.settings["dark_mode"] = not enabled
         else:
-            self.create_path = lambda path: create_dir(STYLE_DIR, path)
             self.parent_app.setStyleSheet(load_css(LIGHT_STYLE))
 
-            self.create_path = lambda path: create_dir(ICON_DIR, path)
             self.navbar.actions()[0].setIcon(QIcon(self.create_path("arrow_left_dark.png")))
             self.navbar.actions()[1].setIcon(QIcon(self.create_path("arrow_right_dark.png")))
             self.navbar.actions()[2].setIcon(QIcon(self.create_path("refresh_dark.png")))
@@ -652,7 +673,7 @@ class ModernBrowser(QMainWindow):
             self.navbar.actions()[-3].setIcon(QIcon(self.create_path("show_notes.png")))
             self.navbar.actions()[-4].setIcon(QIcon(self.create_path("clock_dark.png")))
 
-            self.settings["dark_mode"] = not enabled
+        self.qsettings.setValue("mode/dark", not enabled)
 
     def tab_context_menu(
             self,

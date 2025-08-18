@@ -31,3 +31,7 @@ Especially needed:
 - Core Developer **Binobinos** - https://github.com/Binobinos
 
 - Core Developer 2 **My Account** - https://github.com/myaccountry
+
+- Designer **Ratimir838** - https://github.com/Ratimir838
+
+- Compiler and developer **logqch** - t.me/bio_logqch_freelance

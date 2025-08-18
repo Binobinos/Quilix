@@ -1,0 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&family=Kanit:wght@200;400&family=Prompt:wght@600&family=Ubuntu:ital,wght@0,300;0,700;1,300;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@1,300&display=swap');
+* {
+    margin: 0;
+    padding: 0;
+}
+QWidget {
+    background: #3c3c3c;
+    font-family: 'Calibri';
+    color: #e8e8e8;
+}
+
+QMainWindow {
+    background: #3c3c3c;
+    color: #e8e8e8;
+}
+
+QPushButton {
+    background: #3c3c3c;
+    font-size: 15px;
+    font-family: "Ubuntu";
+    font-weight: 400;
+    color: #e8e8e8;
+}
+
+QAction {
+    background: #3c3c3c;
+    font-size: 15px;
+    font-family: "Ubuntu";
+    font-weight: 400;
+    color: #e8e8e8;
+}
+
+QLabel {
+    background: transparent;
+    font-family: 'Ubuntu';
+    font-size: 14px;
+    color: #e8e8e8;
+}
+
+QLineEdit {
+    background: #3c3c3c;
+    font-family: "Ubuntu";
+    font-size: 14px;
+    color: #e8e8e8;
+}

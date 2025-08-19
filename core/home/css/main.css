@@ -1,0 +1,278 @@
+:root {
+    --google: #4285F4;
+    --yandex: #FF0000;
+    --bing: #00809D;
+    --mailru: #005FF0;
+    --duckduckgo: #DE5833;
+    --primary: #4a6fa5;
+    --secondary: #6b8cae;
+    --accent: #7d9cc0;
+    --text: #2d3748;
+    --bg: url(../images/photo_2025-08-17_09-52-06.jpg);
+    --glass: rgba(255, 255, 255, 0.7);
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+* {
+    user-select: none;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+body {
+    background: var(--bg);
+    min-height: 100vh;
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.welcomeMsg {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.welcomeMsg img {
+    width: 5rem;
+    height: 5rem;
+    object-fit: contain;
+    opacity: 0.9;
+}
+
+#projectName {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: white;
+    text-shadow: 2px 2px #2d3748;
+}
+
+.formBox {
+    width: 100%;
+    max-width: 800px;
+    margin-bottom: 3rem;
+}
+
+.inputbox {
+    position: relative;
+    width: 100%;
+    margin: 2rem 0;
+}
+
+.inputbox input {
+    width: 100%;
+    padding: 1.5rem 1rem 1.5rem 3.5rem;
+    height: 60px;
+    background: var(--glass);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    font-size: 1.1rem;
+    color: var(--text);
+    box-shadow: var(--shadow);
+    transition: all 0.2s ease;
+}
+
+.inputbox input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(125, 156, 192, 0.2);
+}
+
+.inputbox label {
+    position: absolute;
+    left: 3.5rem;
+    top: 1.5rem;
+    color: var(--text);
+    opacity: 0.7;
+    pointer-events: none;
+    transition: all 0.2s ease;
+}
+
+.inputbox input:focus + label,
+.inputbox input:valid + label {
+    top: -0.8rem;
+    left: 1.5rem;
+    font-size: 0.9rem;
+    background: white;
+    padding: 0 0.5rem;
+    border-radius: 6px;
+    color: var(--primary);
+    opacity: 1;
+}
+
+.inputbox ion-icon {
+    position: absolute;
+    left: 1.2rem;
+    top: 1.5rem;
+    font-size: 1.5rem;
+    color: var(--primary);
+    opacity: 0.7;
+}
+
+.search-container {
+    margin-bottom: 2rem;
+}
+
+.search-box {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+        
+.search-form {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+#search-input {
+    flex: 1;
+    padding: 1rem 1.5rem;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 24px;
+    font-size: 1rem;
+    box-shadow: var(--shadow);
+    background: var(--glass);
+}
+
+.search-button {
+    padding: 0 2rem;
+    background: var(--google);
+    color: white;
+    border: none;
+    border-radius: 24px;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    transition: all 0.2s ease;
+}
+
+.search-button:hover {
+    background: #3367d6;
+}
+
+.search-engines h3 {
+    margin-bottom: 1.5rem;
+    font-size: 1.2rem;
+    text-align: center;
+}
+
+.search-engines {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.search-engines h3 {
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.engine-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.engine-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    padding: 1.5rem 1rem;
+    border-radius: 12px;
+    text-decoration: none;
+    color: white;
+    font-weight: 500;
+    text-align: center;
+    box-shadow: var(--shadow);
+    transition: all 0.2s ease;
+}
+
+.engine-btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.8);
+}
+.engine-btn:not(:hover) {
+    filter: brightness(70%);
+}
+
+.engine-btn ion-icon {
+    font-size: 2rem;
+}
+
+.google { background: var(--google); }
+.yandex { background: var(--yandex); }
+.bing { background: var(--bing); }
+.mail { background: var(--mailru); }
+.duckduckgo { background: var(--duckduckgo); }
+
+@media (max-width: 600px) {
+    .engine-buttons {
+        grid-template-columns: 1fr;
+    }
+}
+
+.blockDescriptAndInfo {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: var(--shadow);
+    width: 100%;
+    max-width: 800px;
+    margin-bottom: 3rem;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.textDescription h2 {
+    font-size: 1.5rem;
+    font-weight: 500;
+    line-height: 1.6;
+    color: var(--text);
+    text-align: center;
+}
+
+.textDescription a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.copyright {
+    text-align: center;
+    font-size: 0.rem;
+    color: black;
+    font-weight: 1000;
+    margin-top: auto;
+    padding: 1rem;
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 1.5rem;
+    }
+  
+    .welcomeMsg {
+        flex-direction: column;
+        text-align: center;
+    }
+  
+    .inputbox input {
+        padding: 1.3rem 1rem 1.3rem 3rem;
+        height: 56px;
+    }
+
+    .inputbox ion-icon {
+        left: 1rem;
+        top: 1.3rem;
+    }
+}

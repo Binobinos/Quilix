@@ -48,11 +48,9 @@ FLAGS = {
     "QT_STYLE_OVERRIDE": "",
     "QTWEBENGINE_REMOTE_DEBUGGING": "9222",
     "QTWEBENGINE_CHROMIUM_FLAGS": (
-        '--no-sandbox '
-        '--remote-allow-origins=* '
-        '--enable-devtools-experiments'
+        "--no-sandbox --remote-allow-origins=* --enable-devtools-experiments"
     ),
-    "QT_QPA_PLATFORMTHEME": ""
+    "QT_QPA_PLATFORMTHEME": "",
 }
 """dict: Qt WebEngine configuration flags.
 

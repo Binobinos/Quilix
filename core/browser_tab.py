@@ -12,8 +12,14 @@ from PyQt6.QtCore import QUrl, Qt
 from PyQt6.QtGui import QAction, QGuiApplication, QIcon, QShortcut
 from PyQt6.QtWebEngineCore import QWebEngineSettings, QWebEnginePage
 from PyQt6.QtWebEngineWidgets import QWebEngineView
-from PyQt6.QtWidgets import (QMenu, QMessageBox, QMainWindow, QTextEdit,
-                             QWidget, QVBoxLayout)
+from PyQt6.QtWidgets import (
+    QMenu,
+    QMessageBox,
+    QMainWindow,
+    QTextEdit,
+    QWidget,
+    QVBoxLayout,
+)
 
 from config.config import PAGE_URL
 
@@ -31,11 +37,8 @@ class BrowserTab(QWidget):
     """
 
     def __init__(
-            self,
-            parent: "ModernBrowser",
-            url: str = PAGE_URL,
-            tab_id: Any = None) \
-            -> None:
+        self, parent: "ModernBrowser", url: str = PAGE_URL, tab_id: Any = None
+    ) -> None:
         """
         Initialize a new browser tab.
 
@@ -62,14 +65,22 @@ class BrowserTab(QWidget):
         settings = self.webview.settings()
         settings.setAttribute(QWebEngineSettings.WebAttribute.JavascriptEnabled, True)
         settings.setAttribute(QWebEngineSettings.WebAttribute.PluginsEnabled, True)
-        settings.setAttribute(QWebEngineSettings.WebAttribute.FullScreenSupportEnabled, True)
+        settings.setAttribute(
+            QWebEngineSettings.WebAttribute.FullScreenSupportEnabled, True
+        )
         settings.setAttribute(QWebEngineSettings.WebAttribute.WebGLEnabled, True)
-        settings.setAttribute(QWebEngineSettings.WebAttribute.Accelerated2dCanvasEnabled, True)
+        settings.setAttribute(
+            QWebEngineSettings.WebAttribute.Accelerated2dCanvasEnabled, True
+        )
         settings.setAttribute(QWebEngineSettings.WebAttribute.LocalStorageEnabled, True)
         settings.setAttribute(QWebEngineSettings.WebAttribute.XSSAuditingEnabled, True)
         settings.setAttribute(QWebEngineSettings.WebAttribute.AutoLoadImages, True)
-        settings.setAttribute(QWebEngineSettings.WebAttribute.ScreenCaptureEnabled, True)
-        settings.setAttribute(QWebEngineSettings.WebAttribute.JavascriptCanOpenWindows, True)
+        settings.setAttribute(
+            QWebEngineSettings.WebAttribute.ScreenCaptureEnabled, True
+        )
+        settings.setAttribute(
+            QWebEngineSettings.WebAttribute.JavascriptCanOpenWindows, True
+        )
 
         self.webview.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.webview.customContextMenuRequested.connect(self.page_context_menu)
@@ -124,7 +135,9 @@ class BrowserTab(QWidget):
             copy_text_action = QAction(QIcon.fromTheme("edit-copy"), "Copy Text", self)
             copy_text_action.triggered.connect(self.copy_text)
 
-            paste_text_action = QAction(QIcon.fromTheme("edit-paste"), "Paste Text", self)
+            paste_text_action = QAction(
+                QIcon.fromTheme("edit-paste"), "Paste Text", self
+            )
             paste_text_action.triggered.connect(self.paste_text)
 
             cut_text_action = QAction(QIcon.fromTheme("edit-cut"), "Cut Text", self)
@@ -136,10 +149,14 @@ class BrowserTab(QWidget):
             paste_url_action = QAction(QIcon.fromTheme("edit-paste"), "Paste URL", self)
             paste_url_action.triggered.connect(self.paste_url)
 
-            open_new_tab_action = QAction(QIcon.fromTheme("tab-new"), "Open in New Tab", self)
+            open_new_tab_action = QAction(
+                QIcon.fromTheme("tab-new"), "Open in New Tab", self
+            )
             open_new_tab_action.triggered.connect(self.open_in_new_tab)
 
-            inspect_action = QAction(QIcon.fromTheme("applications-development"), "Inspect", self)
+            inspect_action = QAction(
+                QIcon.fromTheme("applications-development"), "Inspect", self
+            )
             inspect_action.triggered.connect(self.inspect_page)
 
             menu.addAction(back_action)
@@ -161,6 +178,7 @@ class BrowserTab(QWidget):
         except Exception as e:
             print(f"Error in context menu: {e}")
             import traceback
+
             traceback.print_exc()
 
     def setup_shortcuts(self):
@@ -190,7 +208,7 @@ class BrowserTab(QWidget):
         brings the existing window to focus.
         """
         try:
-            if hasattr(self, '_dev_window') and self._dev_window:
+            if hasattr(self, "_dev_window") and self._dev_window:
                 self._dev_window.show()
                 self._dev_window.raise_()
                 return
@@ -213,8 +231,7 @@ class BrowserTab(QWidget):
             QMessageBox.warning(
                 self,
                 "Inspect Error",
-                "Failed to open developer tools.\n"
-                f"Error: {str(e)}"
+                f"Failed to open developer tools.\nError: {str(e)}",
             )
 
     def _on_devtools_close(self):

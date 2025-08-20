@@ -7,9 +7,7 @@ This module initializes and launches a Qt-based modern web browser application.
 import os
 import sys
 
-from PyQt6.QtWidgets import (
-    QApplication
-)
+from PyQt6.QtWidgets import QApplication
 
 from config.config import FLAGS
 from modern_browser import ModernBrowser

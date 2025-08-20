@@ -7,10 +7,7 @@ and CSS files.
 
 import json
 import os
-from typing import (
-    Any,
-    LiteralString, TypeVar
-)
+from typing import Any, LiteralString, TypeVar
 
 from model.setting_model import Setting
 
@@ -18,9 +15,8 @@ T = TypeVar("T", list[Any], dict[str, str])
 
 
 def load_json(
-        filename: str,
-        default: list[Any] | dict[str, str]) \
-        -> list[dict[str, str]] | dict[str, str] | T:
+    filename: str, default: list[Any] | dict[str, str]
+) -> list[dict[str, str]] | dict[str, str] | T:
     """
     Load JSON data from a file, returning a default value if the file doesn't exist or is invalid.
 
@@ -46,10 +42,7 @@ def load_json(
         return default
 
 
-def create_dir(
-        path_dir: str,
-        file_name: str) \
-        -> LiteralString:
+def create_dir(path_dir: str, file_name: str) -> LiteralString:
     """
     Create a directory if it doesn't exist and returns a joined path.
 
@@ -73,10 +66,7 @@ def create_dir(
     return os.path.join(path_dir, file_name)
 
 
-def save_json(
-        filename: str,
-        content: list[Any] | dict[str, Any]) \
-        -> None:
+def save_json(filename: str, content: list[Any] | dict[str, Any]) -> None:
     """
     Save content to a JSON file, silently failing on error.
 
@@ -98,9 +88,7 @@ def save_json(
         print(e)
 
 
-def load_css(
-        filename: str) \
-        -> str:
+def load_css(filename: str) -> str:
     """
     Read and returns the contents of a CSS file.
 
@@ -123,9 +111,7 @@ def load_css(
 
 
 def generate_setting(setting_path: str) -> Setting:
-    setting = {
-
-    }
+    setting = {}
     return
 
 

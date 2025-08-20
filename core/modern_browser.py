@@ -401,7 +401,8 @@ class ModernBrowser(QMainWindow):
         Saves notes in JSON format with the tab's unique ID as key.
         """
         self.notes[tab.tab_id] = tab.note_area.toPlainText()
-        self.qsettings.setValue("notes/all", self.notes)
+        self.settings.setValue("notes/all", self.notes)
+
 
     def show_notes(self) -> None:
         """

@@ -403,6 +403,7 @@ class ModernBrowser(QMainWindow):
         self.notes[tab.tab_id] = tab.note_area.toPlainText()
         self.settings.setValue("notes/all", self.notes)
 
+
     def show_notes(self) -> None:
         """
         Toggle visibility of the notes panel in current tab.

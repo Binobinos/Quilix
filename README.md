@@ -1,3 +1,5 @@
+![image](core/icons/core.png)
+
 # Quilix Browser - A lightweight and secure browser built with Python
 
 [![Python](https://img.shields.io/badge/Python-3.12+-blue.svg)](https://www.python.org/)

@@ -1,37 +1,88 @@
-# Quilix Browser - a lightweight and secure Python browser
+# Quilix Browser - A lightweight and secure browser built with Python
 
-**Project status**: under active development  
-**Author**: an inexperienced student: winmatwey (Matwey B.), open to help
+[![Python](https://img.shields.io/badge/Python-3.12+-blue.svg)](https://www.python.org/)
+[![Qt](https://img.shields.io/badge/Qt-PyQt6-green.svg)](https://www.riverbankcomputing.com/software/pyqt/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Version](https://img.shields.io/badge/version-0.1.1-blue.svg)](https://github.com/Binobinos/Quilix/releases)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
-## About the project
+**Quilix** is an experimental browser designed to be lightweight, secure, and customizable. Built with Python and PyQt6,
+it aims to provide a clean browsing experience while offering powerful features under the hood.
 
-**Quilix** is an experimental browser designed to simplify browsing the Internet.  
-**Goal**: to combine simplicity for regular users and functionality for developers.  
-🔹 **Problem**: Modern browsers are complex and consume a lot of memory (especially Chrome).  
+> **Project Status**: Under active and heavy development. Core features are being implemented and refined.
 
-### Planned features:
-- 🛡️ **Security** (not implemented yet) — protection against viruses and data leaks  
-- 🧩 **Minimalism** — intuitive interface without unnecessary  
+## ✨ Features & Goals
 
-## Current status  
-⚠️ **Unstable version 7.0.0M**  
-* **Not all functions are implemented**  
+### 🚀 Implemented
 
-## Need help!  
-If you want to help with the development, write to **@winmkz** or **@winmatwey** in Telegram.  
-Especially needed:  
-- Experienced Python developers  
-- Testers  
-- Ideas for improvement
+* **Tabbed Browsing**: Full support for multiple tabs.
+* **Modern UI**: A clean, minimalist user interface.
+* **Theme Support**: Light and dark themes with persistent settings.
+* **Session Management**: Browser restores your open tabs and preferences.
 
-# Project Team
+### 🧩 Planned
 
-- Author **winmatwey** - https://github.com/winmatwey
+* **🛡️ Enhanced Security**: Advanced protection against trackers, phishing, and malicious scripts.
+* **🔌 Extension System**: A framework for community-built extensions.
+* **⚙️ Advanced Settings**: Granular control over browser behavior and privacy.
+* **🌐 Web Engine Improvements**: Better compatibility and performance.
 
-- Core Developer **Binobinos** - https://github.com/Binobinos
+## 🛠️ For Developers
 
-- Core Developer 2 **My Account** - https://github.com/myaccountry
+### Tech Stack
 
-- Designer **Ratimir838** - https://github.com/Ratimir838
+* **Backend**: Python 3.12+
+* **GUI Framework**: PyQt6
+* **Version Control**: Git + GitHub with PR-based workflow
+* **Code Quality**: Enforced use of `ruff`, `pylint`, `mypy`, and semantic commit messages.
 
-- Compiler and developer **logqch** - https://t.me/bio_logqch_freelance
+### Getting Started
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/Binobinos/Quilix.git
+   cd Quilix
+   ```
+
+2. **Install dependencies** (recommended within a virtual environment):
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Run the browser**:
+   ```bash
+   python ./core/main.py
+   ```
+
+## 🤝 Contributing
+
+We are open to and grateful for any contributions! The project needs help in many areas:
+
+* **Python Developers**: Help us build core features like the download manager, security systems, and performance
+  optimizations.
+* **UI/UX Designers**: Improve the interface, create new themes, and enhance the user experience.
+* **Testers**: Report bugs, test new features on different operating systems.
+* **Documentation**: Help us write better docs and guides.
+
+Please read our [Contributing Guidelines](CONTRIBUTING.md) (to be created) before submitting a Pull Request. We follow a
+strict code review process to maintain quality.
+
+### 💬 Get in Touch
+
+* For technical discussions and code reviews, please open a GitHub **Issue** or **Discussion**.
+* You can also reach the core team on Telegram: **@binobinos**.
+
+## 👥 The Team
+
+Quilix is developed by a dedicated team of open-source contributors.
+
+| Role                              | Name       | GitHub                                       | Contact      |
+|:----------------------------------|:-----------|:---------------------------------------------|:-------------|
+| **Project Lead & Core Developer** | Mikhail B. | [@Binobinos](https://github.com/Binobinos)   | `@binobinos` |
+| **Core Developer**                | Matwey B.  | [@winmatwey](https://github.com/winmatwey)   | `@winmkz`    |
+| **UI/UX Designer**                | Ratimir    | [@Ratimir838](https://github.com/Ratimir838) | `@Ratenull`  |
+| **Build & Packaging**             | logqch     | -                                            | `@logqch`    |
+
+## 📜 License
+
+This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.

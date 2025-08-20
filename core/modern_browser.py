@@ -47,7 +47,6 @@ class ModernBrowser(QMainWindow):
         parent_app (QApplication): Reference to the main application instance
         session (list): List of saved session tabs
         history (list): Browsing history records
-        settings (dict): Browser configuration settings
         notes (dict): Tab-specific notes
         pomodoro_timer (QTimer): Timer for pomodoro functionality
         pomodoro_state (str): Current pomodoro state
@@ -402,7 +401,7 @@ class ModernBrowser(QMainWindow):
         Saves notes in JSON format with the tab's unique ID as key.
         """
         self.notes[tab.tab_id] = tab.note_area.toPlainText()
-        self.settings["notes"] = self.notes
+        self.qsettings.setValue("notes/all", self.notes)
 
     def show_notes(self) -> None:
         """
@@ -525,6 +524,7 @@ class ModernBrowser(QMainWindow):
         else:
             download.cancel()
 
+    @staticmethod
     def on_download_finished(self):
         print("Загрузка завершена!")
 
@@ -577,7 +577,6 @@ class ModernBrowser(QMainWindow):
 
         Updates application stylesheet and persists preference.
         """
-        self.create_path = lambda path: create_dir(ICON_DIR, path)
         if enabled:
             self.parent_app.setStyleSheet(load_css(LIGHT_STYLE))
             self.navbar.actions()[0].setIcon(

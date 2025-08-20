@@ -108,16 +108,3 @@ def load_css(filename: str) -> str:
     """
     with open(filename, "r", encoding="utf-8") as f:
         return f.read()
-
-
-def generate_setting(setting_path: str) -> Setting:
-    setting = {}
-    return
-
-
-def load_setting(setting_path: str) -> Setting:
-    pass
-
-
-def save_setting(new_setting: Setting, setting_path: str) -> None:
-    pass

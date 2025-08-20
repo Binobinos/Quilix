@@ -8,7 +8,7 @@ and Qt WebEngine flags.
 PAGE_URL = "home//main.html"
 """str: The default homepage URL that loads when the browser starts."""
 
-HOME_URL = "home//main.html"
+HOME_URL = "https://google.com"
 """str: The default search engine"""
 
 ICON_DIR = "icons"

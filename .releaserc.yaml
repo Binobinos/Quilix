@@ -1,5 +1,5 @@
 version_source: tag
-commit_parser: angular
+commit_parser: conventional
 major_tag: major
 minor_tag: minor
 patch_tag: patch

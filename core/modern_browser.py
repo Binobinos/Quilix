@@ -89,10 +89,7 @@ class ModernBrowser(QMainWindow):
         self._init_tab_widget()
         self._init_navigation_bar()
         self.is_fullscreen = self.settings.value("window/fullscreen", True)
-        if self.is_fullscreen:
-            self.showNormal()
-        else:
-            self.showFullScreen()
+        self.toggle_fullscreen()
         self.apply_dark_mode(not self.settings.value("mode/dark", type=bool))
         self.add_plus_tab()
         self.restore_session()
@@ -489,7 +486,7 @@ class ModernBrowser(QMainWindow):
             self.tabs.setTabIcon(idx, icon)
 
     def handle_download(self, download: Any) -> None:
-        path, _ = QFileDialog.getSaveFileName(self, "Сохранить файл", download.suggestedFileName())
+        path, _ = QFileDialog.getSaveFileName(self, "Save file", download.suggestedFileName())
 
         if path:
             download.setPath(path)
@@ -525,11 +522,9 @@ class ModernBrowser(QMainWindow):
         """
         if self.is_fullscreen:
             self.showNormal()
-            self.is_fullscreen = False
-            return
-
-        self.showFullScreen()
-        self.is_fullscreen = True
+        else:
+            self.showFullScreen()
+        self.is_fullscreen = not self.is_fullscreen
 
     def change_theme(self) -> None:
         """

@@ -34,8 +34,8 @@ from config.config import (
     LIGHT_STYLE,
     __version__,
 )
-from core.config.config import HOME_URL
-from core.model.setting_model import ItemHistory
+from config.config import HOME_URL
+from model.setting_model import ItemHistory
 from util import save_json, create_dir, load_css
 
 
@@ -581,29 +581,6 @@ class ModernBrowser(QMainWindow):
         if enabled:
             self.parent_app.setStyleSheet(load_css(LIGHT_STYLE))
             self.navbar.actions()[0].setIcon(
-                QIcon(self.create_path("arrow_left_light.png"))
-            )
-            self.navbar.actions()[1].setIcon(
-                QIcon(self.create_path("arrow_right_light.png"))
-            )
-            self.navbar.actions()[2].setIcon(
-                QIcon(self.create_path("refresh_light.png"))
-            )
-            self.navbar.actions()[3].setIcon(QIcon(self.create_path("home_light.png")))
-            self.navbar.actions()[4].setIcon(
-                QIcon(self.create_path("fullscreen_light.png"))
-            )
-
-            self.navbar.actions()[-1].setIcon(QIcon(self.create_path("dark_mode.png")))
-            self.navbar.actions()[-2].setIcon(QIcon(self.create_path("camera.png")))
-            self.navbar.actions()[-3].setIcon(QIcon(self.create_path("show_notes.png")))
-            self.navbar.actions()[-4].setIcon(
-                QIcon(self.create_path("clock_light.png"))
-            )
-        else:
-            self.parent_app.setStyleSheet(load_css(DARK_STYLE))
-
-            self.navbar.actions()[0].setIcon(
                 QIcon(self.create_path("arrow_left_dark.png"))
             )
             self.navbar.actions()[1].setIcon(
@@ -620,7 +597,30 @@ class ModernBrowser(QMainWindow):
             self.navbar.actions()[-1].setIcon(QIcon(self.create_path("light_mode.png")))
             self.navbar.actions()[-2].setIcon(QIcon(self.create_path("camera.png")))
             self.navbar.actions()[-3].setIcon(QIcon(self.create_path("show_notes.png")))
-            self.navbar.actions()[-4].setIcon(QIcon(self.create_path("clock_dark.png")))
+            self.navbar.actions()[-4].setIcon(
+                QIcon(self.create_path("clock_dark.png"))
+            )
+        else:
+            self.parent_app.setStyleSheet(load_css(DARK_STYLE))
+
+            self.navbar.actions()[0].setIcon(
+                QIcon(self.create_path("arrow_left_light.png"))
+            )
+            self.navbar.actions()[1].setIcon(
+                QIcon(self.create_path("arrow_right_light.png"))
+            )
+            self.navbar.actions()[2].setIcon(
+                QIcon(self.create_path("refresh_light.png"))
+            )
+            self.navbar.actions()[3].setIcon(QIcon(self.create_path("home_light.png")))
+            self.navbar.actions()[4].setIcon(
+                QIcon(self.create_path("fullscreen_light.png"))
+            )
+
+            self.navbar.actions()[-1].setIcon(QIcon(self.create_path("dark_mode.png")))
+            self.navbar.actions()[-2].setIcon(QIcon(self.create_path("camera.png")))
+            self.navbar.actions()[-3].setIcon(QIcon(self.create_path("show_notes.png")))
+            self.navbar.actions()[-4].setIcon(QIcon(self.create_path("clock_light.png")))
 
     def tab_context_menu(self, pos: QPoint) -> None:
         """

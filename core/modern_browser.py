@@ -27,9 +27,8 @@ from PyQt6.QtWidgets import (
 )
 
 from browser_tab import BrowserTab
-from config.config import DARK_STYLE, HISTORY_FILE, HOME_URL, ICON_DIR, LIGHT_STYLE, PAGE_URL, __version__
-from model.setting_model import ItemHistory
-from util import create_dir, load_css, save_json
+from config.config import DARK_STYLE, HOME_URL, ICON_DIR, LIGHT_STYLE, PAGE_URL, __version__
+from util import create_dir, load_css
 
 
 class ModernBrowser(QMainWindow):
@@ -348,7 +347,7 @@ class ModernBrowser(QMainWindow):
         """
         try:
             tab: BrowserTab
-            sessions: list[ItemHistory] = [
+            sessions: list[dict[str, str]] = [
                 {"title": tab.webview.title(), "url": tab.webview.url().toString()}
                 for i in range(self.tabs.count())
                 if isinstance((tab := self.tabs.widget(i)), BrowserTab)
@@ -517,7 +516,6 @@ class ModernBrowser(QMainWindow):
         title = tab.webview.title() or url
         if url and (not self.history or self.history[-1]["url"] != url):
             self.history.append({"title": title, "url": url})
-            save_json(HISTORY_FILE, self.history)
 
     def toggle_fullscreen(self) -> None:
         """
@@ -553,7 +551,7 @@ class ModernBrowser(QMainWindow):
         Updates application stylesheet and persists preference.
         """
         if enabled:
-            self.parent_app.setStyleSheet(load_css(LIGHT_STYLE))
+            self.parent_app.setStyleSheet(load_css(self.create_path(LIGHT_STYLE)))
             self.navbar.actions()[0].setIcon(QIcon(self.create_path("arrow_left_dark.png")))
             self.navbar.actions()[1].setIcon(QIcon(self.create_path("arrow_right_dark.png")))
             self.navbar.actions()[2].setIcon(QIcon(self.create_path("refresh_dark.png")))
@@ -565,7 +563,7 @@ class ModernBrowser(QMainWindow):
             self.navbar.actions()[-3].setIcon(QIcon(self.create_path("show_notes.png")))
             self.navbar.actions()[-4].setIcon(QIcon(self.create_path("clock_dark.png")))
         else:
-            self.parent_app.setStyleSheet(load_css(DARK_STYLE))
+            self.parent_app.setStyleSheet(load_css(self.create_path(DARK_STYLE)))
 
             self.navbar.actions()[0].setIcon(QIcon(self.create_path("arrow_left_light.png")))
             self.navbar.actions()[1].setIcon(QIcon(self.create_path("arrow_right_light.png")))

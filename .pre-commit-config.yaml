@@ -2,10 +2,6 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
     hooks:
-      - id: trailing-whitespace
-        exclude: (version.txt|CHANGELOG.md|requirements.txt)
-      - id: end-of-file-fixer
-        exclude: (\.pre-commit-config\.yaml|\.releaserc\.yaml|.*\.yml|.*\.yaml|CHANGELOG\.md|version\.txt|requirements.txt)  # Добавьте requirements.txt
       - id: check-yaml
         exclude: (version.txt|CHANGELOG.md|requirements.txt)
       - id: check-added-large-files

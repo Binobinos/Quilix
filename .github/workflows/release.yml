@@ -29,8 +29,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install build wheel twine
-          pip install spaceworld
+          pip install build wheel twine spaceworld
           pip install python-semantic-release[github]
 
       - name: Make update script executable

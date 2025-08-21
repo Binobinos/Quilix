@@ -72,7 +72,7 @@ strict code review process to maintain quality.
 ### 💬 Get in Touch
 
 * For technical discussions and code reviews, please open a GitHub **Issue** or **Discussion**.
-* You can also reach the core team on Telegram: **@binobinos**.
+* You can also reach the core team on Telegram: **@winmkz**
 
 ## 👥 The Team
 
@@ -81,7 +81,7 @@ Quilix is developed by a dedicated team of open-source contributors.
 | Role                              | Name         | GitHub                                         | Contact      |
 |:----------------------------------|:-------------|:-----------------------------------------------|:-------------|
 | **Project Lead & Core Developer** | M. Binobinos | [@Binobinos](https://github.com/Binobinos)     | `@binobinos` |
-| **Author**                        | Matwey B.    | [@winmatwey](https://github.com/winmatwey)     | `@winmkz`    |
+| **Author&browser core developer** | Matwey B.    | [@winmatwey](https://github.com/winmatwey)     | `@winmkz`    |
 | **Core Developer**                | My Account.  | [@myaccountry](https://github.com/myaccountry) | `@grannev`   |
 | **UI/UX Designer**                | Ratimir      | [@Ratimir838](https://github.com/Ratimir838)   | `@Ratenull`  |
 | **Build & Packaging**             | logqch       | -                                              | `@logqch`    |

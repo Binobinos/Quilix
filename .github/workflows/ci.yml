@@ -9,7 +9,6 @@ jobs:
   lint:
     name: Lint Code
     runs-on: ubuntu-latest
-    needs: pre-commit-check
     strategy:
       matrix:
         python-version: [ '3.12', '3.13' ]

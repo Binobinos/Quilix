@@ -2,6 +2,17 @@
 
 <!-- version list -->
 
+## v2.0.1 (2025-08-22)
+
+### Bug Fixes
+
+- Bug with loading styles
+  ([`c58586a`](https://github.com/Binobinos/Quilix/commit/c58586a756fc9b5df5b07c02416e3161b58292bf))
+
+- Simplified the logic of __init__ method in modern_browser
+  ([`163d2b8`](https://github.com/Binobinos/Quilix/commit/163d2b85ff2cfe93b617333ecb09e7e2706854ff))
+
+
 ## v2.0.0 (2025-08-21)
 
 ### Bug Fixes

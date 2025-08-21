@@ -1,0 +1,99 @@
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.black]
+line-length = 88
+target-version = ['py312']
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.venv
+  | build
+  | dist
+)/
+'''
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 88
+known_first_party = ["core"]
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+show_error_codes = true
+
+[tool.flake8]
+max-line-length = 88
+extend-ignore = "E203"
+max-complexity = 18
+select = "B,C,E,F,W,T4,B9"
+exclude = ".git,__pycache__,build,dist,.venv,venv"
+filename = "*.py"
+
+[tool.pylint]
+max-line-length = 88
+disable = [
+    "missing-docstring",
+    "too-few-public-methods",
+    "import-error",
+    "protected-access",
+    "duplicate-code"
+]
+
+[tool.semantic_release]
+version_source = "tag"
+commit_parser = "angular"
+major_tag = "major"
+minor_tag = "minor"
+patch_tag = "patch"
+changelog_capitalize = true
+changelog_scope = true
+upload_to_pypi = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "core/tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+addopts = "-v --cov=core --cov-report=xml"
+
+[project]
+name = "Quilix"
+description = "Quilix Browser - A lightweight and secure browser built with Python"
+authors = [
+    { name = "binobinos", email = "binobinos.dev@gmail.com" },
+]
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.12"
+keywords = ["browser", "web-browser", "qt", "pyqt", "pyside", "webkit", "cef", "automation", "headless-browser", "secure-browser", "lightweight-browser"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Operating System :: POSIX",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: MacOS",
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: End Users/Desktop",
+    "Intended Audience :: Developers",
+    "Topic :: Internet :: WWW/HTTP :: Browsers",
+    "Topic :: Software Development :: User Interfaces",
+    "Environment :: X11 Applications :: Qt",
+    "Environment :: Win32 (MS Windows)",
+    "Environment :: MacOS X",
+    "Natural Language :: English",
+    "Typing :: Typed",
+]

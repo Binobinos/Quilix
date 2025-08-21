@@ -1,0 +1,42 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: (version.txt|CHANGELOG.md)
+      - id: end-of-file-fixer
+        exclude: (\.pre-commit-config\.yaml|\.releaserc\.yaml|setup\.cfg|.*\.yml|.*\.yaml|CHANGELOG\.md|version\.txt)
+      - id: check-yaml
+        exclude: (version.txt|CHANGELOG.md)
+      - id: check-added-large-files
+        exclude: (version.txt|CHANGELOG.md)
+
+  - repo: https://github.com/psf/black
+    rev: 24.1.1
+    hooks:
+      - id: black
+        files: ^core/
+
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        files: ^core/
+
+  - repo: https://github.com/pycqa/flake8
+    rev: 6.1.0
+    hooks:
+      - id: flake8
+        files: ^core/
+
+  - repo: https://github.com/pycqa/pydocstyle
+    rev: 6.3.0
+    hooks:
+      - id: pydocstyle
+        files: ^core/
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.8.0
+    hooks:
+      - id: mypy
+        files: ^core/

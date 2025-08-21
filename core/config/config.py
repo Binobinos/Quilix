@@ -14,31 +14,13 @@ HOME_URL = "https://google.com"
 ICON_DIR = "icons"
 """str: Directory name where browser icon files are stored"""
 
-CACHE_DIR = "cache"
-"""str: Directory name where browser cache files are stored."""
-
 STYLE_DIR = "styles"
 """str: Directory name containing CSS style sheets for the application."""
 
-BOOKMARKS_FILE = "cache//quilix_bookmarks.json"
-"""str: Filename for storing browser bookmarks in JSON format."""
-
-HISTORY_FILE = "cache//quilix_history.json"
-"""str: Filename for storing browsing history in JSON format."""
-
-SETTINGS_FILE = "cache//quilix_settings.json"
-"""str: Filename for storing application settings in JSON format."""
-
-SESSION_FILE = "cache//quilix_session.json"
-"""str: Filename for storing session data in JSON format."""
-
-NOTES_FILE = "cache//quilix_notes.json"
-"""str: Filename for storing user notes in JSON format."""
-
-DARK_STYLE = "styles//dark_mode.css"
+DARK_STYLE = "dark_mode.css"
 """str: Path to the dark mode stylesheet."""
 
-LIGHT_STYLE = "styles//light_mode.css"
+LIGHT_STYLE = "light_mode.css"
 """str: Path to the light mode stylesheet."""
 
 __version__ = "Quilix Version 1.0.0 ENG"

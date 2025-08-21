@@ -5,7 +5,7 @@
 [![Python](https://img.shields.io/badge/Python-3.12+-blue.svg)](https://www.python.org/)
 [![Qt](https://img.shields.io/badge/Qt-PyQt6-green.svg)](https://www.riverbankcomputing.com/software/pyqt/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/github/v/release/Binobinos/Quilix?include_prereleases&label=version&color=blue)](https://github.com/Binobinos/Quilix/releases)
+![Version](https://img.shields.io/github/v/release/Binobinos/Quilix?include_prereleases&label=version&color=blue)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
 **Quilix** is an experimental browser designed to be lightweight, secure, and customizable. Built with Python and PyQt6,

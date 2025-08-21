@@ -5,5 +5,38 @@ minor_tag: minor
 patch_tag: patch
 changelog_capitalize: true
 changelog_scope: true
-upload_to_pypi: false
 upload_to_release: true
+upload_to_pypi: false
+
+changelog:
+  exclude:
+    commits:
+      - typo
+      - style
+      - refactor
+  categories:
+    - title: ":rocket: Features"
+      labels:
+        - feature
+        - enhancement
+    - title: ":bug: Bug Fixes"
+      labels:
+        - fix
+        - bug
+    - title: ":memo: Documentation"
+      labels:
+        - docs
+        - documentation
+    - title: ":hammer: Refactoring"
+      labels:
+        - refactor
+
+github:
+  assets:
+    - dist/*.whl
+    - dist/*.tar.gz
+
+hooks:
+  before_commit:
+    - command: python update_version.py {new_version}
+      files: [ core/config/config.py ]

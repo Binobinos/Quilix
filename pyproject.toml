@@ -102,6 +102,7 @@ addopts = "-v --cov=core --cov-report=xml"
 
 [project]
 name = "Quilix"
+version = "0.0.0"
 description = "Quilix Browser - A lightweight and secure browser built with Python"
 authors = [
     { name = "binobinos", email = "binobinos.dev@gmail.com" },

@@ -32,8 +32,15 @@ jobs:
           pip install build wheel twine spaceworld
           pip install python-semantic-release[github]
 
-      - name: Make update script executable
-        run: chmod +x update_version.py
+      - name: Get next version
+        id: get_version
+        run: |
+          NEXT_VERSION=$(semantic-release version --print)
+          echo "next_version=$NEXT_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Update version in config
+        run: |
+          python update_version.py ${{ steps.get_version.outputs.next_version }}
 
       - name: Build package
         run: python -m build

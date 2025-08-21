@@ -2,8 +2,6 @@ name: Release
 on:
   push:
     branches: [ main ]
-    tags:
-      - 'v*'  # Запускать также при создании тегов
 
 jobs:
   release:
@@ -45,6 +43,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          semantic-release version
           semantic-release publish
 
       - name: Upload artifacts

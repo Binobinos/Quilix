@@ -85,6 +85,7 @@ disable = [
 
 [tool.semantic_release]
 version_source = "tag"
+version_variable = "pyproject.toml:version"
 commit_parser = "conventional"
 major_tag = "major"
 minor_tag = "minor"

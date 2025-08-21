@@ -6,37 +6,30 @@ session management, note-taking, and productivity features.
 """
 
 import os
+from collections.abc import Callable
 from typing import Any
 
-from PyQt6.QtCore import QPoint, Qt, QTimer, QUrl, QSize, QSettings
-from PyQt6.QtGui import QAction, QIcon
+from PyQt6.QtCore import QPoint, QSettings, QSize, Qt, QTimer, QUrl
+from PyQt6.QtGui import QAction, QIcon, QKeyEvent
 from PyQt6.QtWebEngineWidgets import QWebEngineView
 from PyQt6.QtWidgets import (
+    QApplication,
     QFileDialog,
     QInputDialog,
     QLineEdit,
     QMainWindow,
     QMenu,
     QMessageBox,
+    QTabBar,
     QTabWidget,
     QToolBar,
     QWidget,
-    QApplication,
-    QTabBar,
 )
 
 from browser_tab import BrowserTab
-from config.config import (
-    HISTORY_FILE,
-    PAGE_URL,
-    ICON_DIR,
-    DARK_STYLE,
-    LIGHT_STYLE,
-    __version__,
-)
-from config.config import HOME_URL
+from config.config import DARK_STYLE, HISTORY_FILE, HOME_URL, ICON_DIR, LIGHT_STYLE, PAGE_URL, __version__
 from model.setting_model import ItemHistory
-from util import save_json, create_dir, load_css
+from util import create_dir, load_css, save_json
 
 
 class ModernBrowser(QMainWindow):
@@ -82,9 +75,7 @@ class ModernBrowser(QMainWindow):
         self.dark_mode = self.settings.value("appearance/dark_mode", False, type=bool)
         self.home_url = self.settings.value("navigation/home_url", HOME_URL)
         self.session = self.settings.value("session/last_session", [])
-        self.session_index = self.settings.value(
-            "session/last_session_index", 0, type=int
-        )
+        self.session_index = self.settings.value("session/last_session_index", 0, type=int)
         self.history = self.settings.value("history/items", [])
         self.notes = self.settings.value("notes/all", {})
 
@@ -108,13 +99,15 @@ class ModernBrowser(QMainWindow):
         self.restore_session()
         self.pomodoro_timer.timeout.connect(self.pomodoro_tick)
 
-    def keyPressEvent(self, event):
-        if event.key() == Qt.Key.Key_F11:
+    def keyPressEvent(self, event: QKeyEvent | None) -> None:
+        if event is None:
+            super().keyPressEvent(event)
+        elif event.key() == Qt.Key.Key_F11:
             self.toggle_fullscreen()
         else:
             super().keyPressEvent(event)
 
-    def closeEvent(self, event) -> None:
+    def closeEvent(self, event: Any) -> None:
         self.settings.setValue("window/size", self.size())
         self.settings.setValue("window/position", self.pos())
         self.settings.setValue("appearance/dark_mode", self.dark_mode)
@@ -138,8 +131,8 @@ class ModernBrowser(QMainWindow):
         self.tabs.tabBar().customContextMenuRequested.connect(self.tab_context_menu)
         self.setCentralWidget(self.tabs)
 
-    def on_tab_clicked(self, index):
-        """Обработчик клика по вкладке"""
+    def on_tab_clicked(self, index: int) -> None:
+        """Tab click handler."""
         if index == self.tabs.count() - 1:
             self.add_tab(self.home_url)
 
@@ -158,9 +151,7 @@ class ModernBrowser(QMainWindow):
 
         # Address bar
         self.address_bar = QLineEdit()
-        self.address_bar.setPlaceholderText(
-            "Smart Search: url, bookmarks, actions (note, timer, mute, screenshot...)"
-        )
+        self.address_bar.setPlaceholderText("Smart Search: url, bookmarks, actions (note, timer, mute, screenshot...)")
         self.address_bar.returnPressed.connect(self.smart_search)
         self.navbar.addWidget(self.address_bar)
 
@@ -172,7 +163,7 @@ class ModernBrowser(QMainWindow):
         self._add_action_button("camera.png", "Screenshot", self.screenshot)
         self._add_action_button("light_mode.png", "Change Theme", self.change_theme)
 
-    def _add_nav_button(self, icon_name: str, text: str, callback) -> None:
+    def _add_nav_button(self, icon_name: str, text: str, callback: Callable[[], None]) -> None:
         """
         Help to add navigation button to toolbar.
 
@@ -185,7 +176,7 @@ class ModernBrowser(QMainWindow):
         btn.triggered.connect(callback)
         self.navbar.addAction(btn)
 
-    def _add_action_button(self, icon_name: str, text: str, callback) -> None:
+    def _add_action_button(self, icon_name: str, text: str, callback: Callable[[], None]) -> None:
         """
         Help to add action button to toolbar.
 
@@ -198,12 +189,10 @@ class ModernBrowser(QMainWindow):
         action.triggered.connect(callback)
         self.navbar.addAction(action)
 
-    def add_plus_tab(self):
-        """Добавляет специальную вкладку с плюсиком"""
+    def add_plus_tab(self) -> None:
+        """Add a special tab with a plus sign."""
         self.tabs.addTab(QWidget(), "+")
-        self.tabs.tabBar().setTabButton(
-            self.tabs.count() - 1, QTabBar.ButtonPosition.RightSide, None
-        )
+        self.tabs.tabBar().setTabButton(self.tabs.count() - 1, QTabBar.ButtonPosition.RightSide, None)
 
     def add_tab(self, url: str | None = None) -> None:
         """
@@ -223,12 +212,8 @@ class ModernBrowser(QMainWindow):
             self.tabs.removeTab(self.tabs.count() - 1)
         tab = BrowserTab(self, url=url)
         idx = self.tabs.addTab(tab, "")
-        tab.webview.urlChanged.connect(
-            lambda qurl, t=tab: self.update_address_bar(qurl, t)
-        )
-        tab.webview.titleChanged.connect(
-            lambda title, i=idx: self.update_tab_title(title, i)
-        )
+        tab.webview.urlChanged.connect(lambda qurl, t=tab: self.update_address_bar(qurl, t))
+        tab.webview.titleChanged.connect(lambda title, i=idx: self.update_tab_title(title, i))
         tab.webview.iconChanged.connect(lambda icon, i=idx: self.set_tab_icon(i, icon))
         tab.webview.urlChanged.connect(lambda qurl, t=tab: self.save_history(qurl, t))
         tab.note_area.textChanged.connect(lambda t=tab: self.save_note(t))
@@ -369,9 +354,7 @@ class ModernBrowser(QMainWindow):
                 if isinstance((tab := self.tabs.widget(i)), BrowserTab)
             ]
             self.settings.setValue("session/last_session", sessions)
-            self.settings.setValue(
-                "session/last_session_index", self.tabs.currentIndex()
-            )
+            self.settings.setValue("session/last_session_index", self.tabs.currentIndex())
         except Exception as e:
             print(e)
 
@@ -403,7 +386,6 @@ class ModernBrowser(QMainWindow):
         self.notes[tab.tab_id] = tab.note_area.toPlainText()
         self.settings.setValue("notes/all", self.notes)
 
-
     def show_notes(self) -> None:
         """
         Toggle visibility of the notes panel in current tab.
@@ -423,20 +405,16 @@ class ModernBrowser(QMainWindow):
         Shows appropriate status messages to user.
         """
         if self.pomodoro_state == "idle":
-            mins, ok = QInputDialog.getInt(
-                self, "Pomodoro", "Minutes to focus:", 25, 1, 120
-            )
+            mins, ok = QInputDialog.getInt(self, "Pomodoro", "Minutes to focus:", 25, 1, 120)
             if ok:
                 self.pomodoro_time = mins * 60
                 self.pomodoro_state = "running"
                 self.pomodoro_timer.start(1000)
-                QMessageBox.information(
-                    self, "Pomodoro", f"Focus timer started for {mins} minutes."
-                )
+                QMessageBox.information(self, "Pomodoro", f"Focus timer started for {mins} minutes.")
             return
         self.pomodoro_timer.stop()
         self.pomodoro_state = "idle"
-        QMessageBox.information(self, "Pomodoro", f"Timer stopped.")
+        QMessageBox.information(self, "Pomodoro", "Timer stopped.")
 
     def pomodoro_tick(self) -> None:
         """
@@ -464,15 +442,13 @@ class ModernBrowser(QMainWindow):
         if tab := self.get_current_tab():
             pixmap = tab.webview.grab()
             img = pixmap.toImage()
-            fname_tuple = QFileDialog.getSaveFileName(
-                self, "Save Screenshot", "screenshot.png", "PNG Files (*.png)"
-            )
+            fname_tuple = QFileDialog.getSaveFileName(self, "Save Screenshot", "screenshot.png", "PNG Files (*.png)")
             fname = fname_tuple[0] if isinstance(fname_tuple, tuple) else fname_tuple
             if fname:
                 img.save(fname)
                 QMessageBox.information(self, "Screenshot", f"Saved as {fname}")
 
-    def update_address_bar(self, qurl: Any, tab: BrowserTab) -> None:
+    def update_address_bar(self, qurl: QUrl, tab: BrowserTab) -> None:
         """
         Update address bar when a tab's URL changes.
 
@@ -500,7 +476,7 @@ class ModernBrowser(QMainWindow):
             f"{title[:20]}..." if len(title) > 20 else title if title else "New Tab",
         )
 
-    def set_tab_icon(self, idx: int, icon: Any) -> None:
+    def set_tab_icon(self, idx: int, icon: QIcon) -> None:
         """
         Set favicon for a tab.
 
@@ -513,10 +489,8 @@ class ModernBrowser(QMainWindow):
         if not icon.isNull():
             self.tabs.setTabIcon(idx, icon)
 
-    def handle_download(self, download):
-        path, _ = QFileDialog.getSaveFileName(
-            self, "Сохранить файл", download.suggestedFileName()
-        )
+    def handle_download(self, download: Any) -> None:
+        path, _ = QFileDialog.getSaveFileName(self, "Сохранить файл", download.suggestedFileName())
 
         if path:
             download.setPath(path)
@@ -526,10 +500,10 @@ class ModernBrowser(QMainWindow):
             download.cancel()
 
     @staticmethod
-    def on_download_finished(self):
+    def on_download_finished() -> None:
         print("Загрузка завершена!")
 
-    def save_history(self, qurl: Any, tab: Any) -> None:
+    def save_history(self, qurl: QUrl, tab: Any) -> None:
         """
         Record visited URLs in browsing history.
 
@@ -580,42 +554,24 @@ class ModernBrowser(QMainWindow):
         """
         if enabled:
             self.parent_app.setStyleSheet(load_css(LIGHT_STYLE))
-            self.navbar.actions()[0].setIcon(
-                QIcon(self.create_path("arrow_left_dark.png"))
-            )
-            self.navbar.actions()[1].setIcon(
-                QIcon(self.create_path("arrow_right_dark.png"))
-            )
-            self.navbar.actions()[2].setIcon(
-                QIcon(self.create_path("refresh_dark.png"))
-            )
+            self.navbar.actions()[0].setIcon(QIcon(self.create_path("arrow_left_dark.png")))
+            self.navbar.actions()[1].setIcon(QIcon(self.create_path("arrow_right_dark.png")))
+            self.navbar.actions()[2].setIcon(QIcon(self.create_path("refresh_dark.png")))
             self.navbar.actions()[3].setIcon(QIcon(self.create_path("home_dark.png")))
-            self.navbar.actions()[4].setIcon(
-                QIcon(self.create_path("fullscreen_dark.png"))
-            )
+            self.navbar.actions()[4].setIcon(QIcon(self.create_path("fullscreen_dark.png")))
 
             self.navbar.actions()[-1].setIcon(QIcon(self.create_path("light_mode.png")))
             self.navbar.actions()[-2].setIcon(QIcon(self.create_path("camera.png")))
             self.navbar.actions()[-3].setIcon(QIcon(self.create_path("show_notes.png")))
-            self.navbar.actions()[-4].setIcon(
-                QIcon(self.create_path("clock_dark.png"))
-            )
+            self.navbar.actions()[-4].setIcon(QIcon(self.create_path("clock_dark.png")))
         else:
             self.parent_app.setStyleSheet(load_css(DARK_STYLE))
 
-            self.navbar.actions()[0].setIcon(
-                QIcon(self.create_path("arrow_left_light.png"))
-            )
-            self.navbar.actions()[1].setIcon(
-                QIcon(self.create_path("arrow_right_light.png"))
-            )
-            self.navbar.actions()[2].setIcon(
-                QIcon(self.create_path("refresh_light.png"))
-            )
+            self.navbar.actions()[0].setIcon(QIcon(self.create_path("arrow_left_light.png")))
+            self.navbar.actions()[1].setIcon(QIcon(self.create_path("arrow_right_light.png")))
+            self.navbar.actions()[2].setIcon(QIcon(self.create_path("refresh_light.png")))
             self.navbar.actions()[3].setIcon(QIcon(self.create_path("home_light.png")))
-            self.navbar.actions()[4].setIcon(
-                QIcon(self.create_path("fullscreen_light.png"))
-            )
+            self.navbar.actions()[4].setIcon(QIcon(self.create_path("fullscreen_light.png")))
 
             self.navbar.actions()[-1].setIcon(QIcon(self.create_path("dark_mode.png")))
             self.navbar.actions()[-2].setIcon(QIcon(self.create_path("camera.png")))
@@ -640,17 +596,13 @@ class ModernBrowser(QMainWindow):
             return
         menu = QMenu(self)
         duplicate_action = QAction("Duplicate Tab", self)
-        duplicate_action.triggered.connect(
-            lambda checked=False, i=idx: self.duplicate_tab(i)
-        )
+        duplicate_action.triggered.connect(lambda checked=False, i=idx: self.duplicate_tab(i))
         reload_action = QAction("Reload Tab", self)
         reload_action.triggered.connect(lambda checked=False, i=idx: self.reload_tab(i))
         tab = self.tabs.widget(idx)
         page = tab.webview.page()
-        mute_action = QAction(f"{"Unmute" if page.isAudioMuted() else "Mute"} Tab", self)
-        mute_action.triggered.connect(
-            lambda checked=False, i=idx: self.toggle_mute_tab(i)
-        )
+        mute_action = QAction(f"{'Unmute' if page.isAudioMuted() else 'Mute'} Tab", self)
+        mute_action.triggered.connect(lambda checked=False, i=idx: self.toggle_mute_tab(i))
         close_action = QAction("Close Tab", self)
         close_action.triggered.connect(lambda checked=False, i=idx: self.close_tab(i))
 
@@ -707,6 +659,4 @@ class ModernBrowser(QMainWindow):
             page = tab.webview.page()
             muted = page.isAudioMuted()
             page.setAudioMuted(not muted)
-            QMessageBox.information(
-                self, "Mute", "Audio " + ("muted" if not muted else "unmuted")
-            )
+            QMessageBox.information(self, "Mute", "Audio " + ("muted" if not muted else "unmuted"))

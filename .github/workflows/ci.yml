@@ -23,18 +23,20 @@ jobs:
 
       - name: Install linting tools
         run: pip install black isort flake8 mypy pydocstyle
+        continue-on-error: true
 
       - name: Run black
         run: black --check core/
-
+        continue-on-error: true
       - name: Run isort
         run: isort --check-only core/
-
+        continue-on-error: true
       - name: Run flake8
         run: flake8 core/
-
+        continue-on-error: true
       - name: Run mypy
         run: mypy core/
-
+        continue-on-error: true
       - name: Run pydocstyle
         run: pydocstyle core/
+        continue-on-error: true

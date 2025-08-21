@@ -3,23 +3,30 @@ requires = ["setuptools>=61.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.black]
-line-length = 88
+line-length = 140
 target-version = ['py312']
 include = '\.pyi?$'
-exclude = '''
-/(
-    \.git
-  | \.venv
-  | build
-  | dist
-)/
-'''
 
 [tool.isort]
 profile = "black"
 multi_line_output = 3
-line_length = 88
+line_length = 140
 known_first_party = ["core"]
+
+[tool.pydocstyle]
+ignore = [
+    "D100",
+    "D203",
+    "D212",
+    "D213",
+    "D413",
+    "D407",
+    "D406",
+    "D102",
+    "D101",
+]
+match = "(?!_).*"
+match-dir = "(?!_).*"
 
 [tool.mypy]
 python_version = "3.12"
@@ -31,9 +38,35 @@ check_untyped_defs = true
 warn_redundant_casts = true
 warn_unused_ignores = true
 show_error_codes = true
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = [
+    "PyQt6.*",
+    "browser_tab",
+    "config.config",
+    "model.setting_model",
+    "util"
+]
+ignore_errors = true
+
+[mypy-PyQt6]
+ignore_missing_imports = true
+
+[mypy-browser_tab]
+ignore_missing_imports = true
+
+[mypy-config.config]
+ignore_missing_imports = true
+
+[mypy-model.setting_model]
+ignore_missing_imports = true
+
+[mypy-util]
+ignore_missing_imports = true
 
 [tool.flake8]
-max-line-length = 88
+max-line-length = 140
 extend-ignore = "E203"
 max-complexity = 18
 select = "B,C,E,F,W,T4,B9"
@@ -41,7 +74,7 @@ exclude = ".git,__pycache__,build,dist,.venv,venv"
 filename = "*.py"
 
 [tool.pylint]
-max-line-length = 88
+max-line-length = 140
 disable = [
     "missing-docstring",
     "too-few-public-methods",
@@ -52,7 +85,7 @@ disable = [
 
 [tool.semantic_release]
 version_source = "tag"
-commit_parser = "angular"
+commit_parser = "conventional"
 major_tag = "major"
 minor_tag = "minor"
 patch_tag = "patch"

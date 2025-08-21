@@ -9,23 +9,20 @@ import json
 import os
 from typing import Any, LiteralString, TypeVar
 
-from model.setting_model import Setting
-
 T = TypeVar("T", list[Any], dict[str, str])
 
 
-def load_json(
-    filename: str, default: list[Any] | dict[str, str]
-) -> list[dict[str, str]] | dict[str, str] | T:
+def load_json(filename: str, default: list[Any] | dict[str, str]) -> Any:
     """
-    Load JSON data from a file, returning a default value if the file doesn't exist or is invalid.
+    Load JSON data from a file returning a default value if the file doesn't exist or is invalid.
 
     Args:
         filename: Path to the JSON file to load.
         default: Default value to return if the file doesn't exist or can't be parsed.
 
     Returns:
-        The parsed JSON data (as a list or dictionary) if successful, otherwise the default value.
+        The parsed JSON data (as a list or dictionary)
+         if successful, otherwise the default value.
 
     Example:
         >>> data = load_json('config.json', {'default': 'value'})

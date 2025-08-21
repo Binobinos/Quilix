@@ -6,3 +6,4 @@ patch_tag: patch
 changelog_capitalize: true
 changelog_scope: true
 upload_to_pypi: false
+upload_to_release: true

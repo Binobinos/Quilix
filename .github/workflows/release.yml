@@ -9,6 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      issues: write
+      pull-requests: write
 
     steps:
       - name: Checkout code
@@ -23,14 +25,13 @@ jobs:
           python-version: '3.12'
 
       - name: Install semantic-release
-        run: pip install python-semantic-release
+        run: pip install python-semantic-release[github]
 
-      - name: Determine version and create tag
+      - name: Build package (если нужно)
+        run: python -m build
+
+      - name: Create Release and Publish
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: semantic-release version
-
-      - name: Create GitHub Release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: semantic-release publish
+        run: |
+          semantic-release publish

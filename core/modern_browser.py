@@ -546,7 +546,7 @@ class ModernBrowser(QMainWindow):
         Updates application stylesheet and persists preference.
         """
         if enabled:
-            self.parent_app.setStyleSheet(load_css(create_dir(STYLE_DIR, DARK_STYLE)))
+            self.parent_app.setStyleSheet(load_css(create_dir(STYLE_DIR, LIGHT_STYLE)))
             self.navbar.actions()[0].setIcon(QIcon(self.create_path("arrow_left_dark.png")))
             self.navbar.actions()[1].setIcon(QIcon(self.create_path("arrow_right_dark.png")))
             self.navbar.actions()[2].setIcon(QIcon(self.create_path("refresh_dark.png")))
@@ -558,7 +558,7 @@ class ModernBrowser(QMainWindow):
             self.navbar.actions()[-3].setIcon(QIcon(self.create_path("show_notes.png")))
             self.navbar.actions()[-4].setIcon(QIcon(self.create_path("clock_dark.png")))
         else:
-            self.parent_app.setStyleSheet(load_css(create_dir(STYLE_DIR, LIGHT_STYLE)))
+            self.parent_app.setStyleSheet(load_css(create_dir(STYLE_DIR, DARK_STYLE)))
 
             self.navbar.actions()[0].setIcon(QIcon(self.create_path("arrow_left_light.png")))
             self.navbar.actions()[1].setIcon(QIcon(self.create_path("arrow_right_light.png")))

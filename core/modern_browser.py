@@ -190,7 +190,7 @@ class ModernBrowser(QMainWindow):
         self.tabs.addTab(QWidget(), "+")
         self.tabs.tabBar().setTabButton(self.tabs.count() - 1, QTabBar.ButtonPosition.RightSide, None)
 
-    def add_tab(self, url: str | None = None) -> None:
+    def add_tab(self, url: str | None = None, return_page: bool = False) -> Any:
         """
         Add a new browser tab.
 
@@ -217,6 +217,8 @@ class ModernBrowser(QMainWindow):
             tab.note_area.setText(self.notes[tab.tab_id])
         self.tabs.setCurrentIndex(idx)
         self.add_plus_tab()
+        if return_page:
+            return tab.webview.page()
 
     def close_tab(self, idx: int) -> None:
         """

@@ -15,6 +15,24 @@ from PyQt6.QtWebEngineWidgets import QWebEngineView
 from PyQt6.QtWidgets import QMainWindow, QMenu, QMessageBox, QTextEdit, QVBoxLayout, QWidget
 
 from config.config import PAGE_URL
+import logging
+
+
+class CustomWebEnginePage(QWebEnginePage):
+    def __init__(self, browser_tab, parent=None):
+        super().__init__(parent)
+        self.browser_tab = browser_tab
+
+    def createWindow(self, _type):
+        try:
+            # Открыть новую вкладку через родителя и вернуть её страницу
+            if hasattr(self.browser_tab.parent, 'add_tab'):
+                new_tab = self.browser_tab.parent.add_tab(return_page=True)
+                return new_tab
+            return None
+        except Exception as e:
+            logging.getLogger(__name__).exception("[CustomWebEnginePage.createWindow] Exception:")
+            return None
 
 
 class BrowserTab(QWidget):
@@ -49,6 +67,7 @@ class BrowserTab(QWidget):
         super().__init__()
         self.layout = QVBoxLayout(self)
         self.webview = QWebEngineView()
+        self.webview.setPage(CustomWebEnginePage(self, self.webview))
         self.note_area = QTextEdit()
         self.note_area.setPlaceholderText("Tab notes (exclusive feature)")
         self.note_area.setMaximumHeight(80)

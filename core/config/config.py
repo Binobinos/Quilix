@@ -23,7 +23,7 @@ DARK_STYLE = "dark_mode.css"
 LIGHT_STYLE = "light_mode.css"
 """str: Path to the light mode stylesheet."""
 
-__version__ = "Quilix Version 1.0.0 ENG"
+__version__ = "Quilix Version 2.0.1 ENG"
 """str: The current version string of the Quilix browser."""
 
 FLAGS = {

@@ -54,6 +54,13 @@ if __name__ == "__main__":
     """
     os.environ.update(FLAGS)
     app = QApplication(sys.argv)
+    
+    # Set application icon
+    icon_path = os.path.join(os.path.dirname(__file__), 'styles', 'icon.ico')
+    if os.path.exists(icon_path):
+        from PyQt6.QtGui import QIcon
+        app.setWindowIcon(QIcon(icon_path))
+    
     browser = ModernBrowser(app)
     browser.show()
     sys.exit(app.exec())

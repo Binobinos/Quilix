@@ -78,14 +78,14 @@ strict code review process to maintain quality.
 
 Quilix is developed by a dedicated team of open-source contributors.
 
-| Role                              | Name         | GitHub                                         | Contact      |
-|:----------------------------------|:-------------|:-----------------------------------------------|:-------------|
-| **Project Lead & Core Developer** | M. Binobinos | [@Binobinos](https://github.com/Binobinos)     | `@binobinos` |
-| **Author&browser core developer** | Matwey B.    | [@winmatwey](https://github.com/winmatwey)     | `@winmkz`    |
-| **Core Developer**                | My Account.  | [@myaccountry](https://github.com/myaccountry) | `@grannev`   |
-| **UI/UX Designer**                | Ratimir      | [@Ratimir838](https://github.com/Ratimir838)   | `@Ratenull`  |
-| **Build & Packaging**             | logqch       | -                                              | `@logqch`    |
-
+| Role                              | Name         | GitHub                                            | Contact         |
+|:----------------------------------|:-------------|:--------------------------------------------------|:----------------| 
+| **Project Lead & Core Developer** | M. Binobinos | [@Binobinos](https://github.com/Binobinos)        | `@binobinos`    |
+| **Author&browser core developer** | Matwey B.    | [@winmatwey](https://github.com/winmatwey)        | `@winmkz`       |
+| **Core Developer**                | My Account.  | [@myaccountry](https://github.com/myaccountry)    | `@grannev`      |
+| **UI/UX Designer**                | Ratimir      | [@Ratimir838](https://github.com/Ratimir838)      | `@Ratenull`     |
+| **Build & Packaging**             | logqch       | -                                                 | `@logqch`       |
+| **Packaging**                     | Anoop Soft.  | [@anoop14613742](https://github.com/anoop14613742)| `@anoopsoftware`|
 ## 📜 License
 
 This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
